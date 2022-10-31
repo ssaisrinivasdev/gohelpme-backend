@@ -19,8 +19,8 @@ mongoose.connect(connection)
 .then(()=>{
     console.log("Connected to DB")
 })
-.catch(()=>{
-    console.log("Unable to connect to DB")
+.catch((error)=>{
+    console.log(error)
 })
 
 //Import the routes
