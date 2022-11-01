@@ -11,11 +11,10 @@ app.use(cors())
 app.use(express.json())
 
 
-const connection = "mongodb+srv://"+process.env['MONGO_DB_USERNAME']+":"+process.env['MONGO_DB_PASSWORD']
-                    +"@gohelpme-node-backend.le2kcot.mongodb.net/GoFundMe"
+const connectionString = process.env['CONNECTION_STRING']
 //MongoDB Connection
-console.log(connection)
-mongoose.connect(connection)
+
+mongoose.connect(connectionString)
 .then(()=>{
     console.log("Connected to DB")
 })
@@ -62,5 +61,5 @@ app.use('/api', userRoutes)
 
 
 app.listen(process.env['PORT'], () => {
-	console.log('Server started on 3000')
+	console.log('Server started on '+process.env['PORT'])
 })

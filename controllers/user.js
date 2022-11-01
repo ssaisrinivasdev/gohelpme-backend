@@ -27,12 +27,12 @@ exports.register = (req, res) => {
   User.findOne({email}, (err, resUser) => {
     if(resUser){
       return res.status(400).json({
-        error: "User Already Exists"
+        error: "User already exists"
       })
     }
     if(err) {
       return res.status(400).json({
-        error: err
+        error: "Something went wrong please try again"
       })
     }
     var d = new Date()
@@ -45,7 +45,7 @@ exports.register = (req, res) => {
       if(err)
         return res.status(400).json({message: err})
 
-      return res.json({message: "Success",user})
+      return res.json({message: "Success"})
     })
   })
 
@@ -73,8 +73,8 @@ function initiateVerification(toMail){
 
   mailTransporter.sendMail(mailDetails, function(err, data) {
       if(err) {
-        return res.status(400).json({message: err})
-      } else {
+        return res.status(400).json({message: "Something went wrong while send verification code"})
+      }else {
           console.log('Email sent successfully');
       }
   });
@@ -110,24 +110,22 @@ exports.login = (req, res) => {
     // Create token
     const token = jwt.sign(
 			{
-				name: user.name,
 				email: user.email,  
 			},
 			'secret123'
 		)
 
     // Put token in cookie
-    res.cookie('token', token, {expire: new Date() + 1})
+    const expiryDate = new Date()
+    expiryDate.setMinutes(expiryDate.getMinutes() + 90)
+    res.cookie('token', token, {expire: expiryDate})
 
     // Send response
     const {_id, name, email} = user
-    return res.json({
-      token,
-      user: {
-        _id,
-        name,
-        email
-      }
+    return res.status(200).json({
+      "message":"Sucsess",
+      "token": token,
+      "expiry":expiryDate
     })
     
   })
