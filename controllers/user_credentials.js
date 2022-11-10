@@ -18,7 +18,7 @@ exports.register = catchAsync(async (req, res, next) => {
     });
 
     if (userFound) {
-      res.status(401).json({
+      return res.status(401).json({
         error: "Email already exists",
         message: "Error"
       });
@@ -35,13 +35,13 @@ exports.register = catchAsync(async (req, res, next) => {
   
       user.save((err, user) => {
         if (err) {
-          res.status(401).json({
+          return res.status(401).json({
             error: "Something went wrong",
             message: err,
           });
         }
         else{
-          res.status(200).json({
+          return res.status(200).json({
             message: "Success", 
             email: user.email
           });
@@ -50,7 +50,7 @@ exports.register = catchAsync(async (req, res, next) => {
     }
   }
   catch(err){
-    res.status(400).json({
+    return res.status(400).json({
       error: "Something went wrong",
       message: err
     }); 
@@ -92,7 +92,7 @@ exports.login = catchAsync(async (req, res, next) => {
     })
   }
   catch(err){
-    res.status(400).json({
+    return res.status(400).json({
       error: "Something went wrong",
       message: err
     }); 
@@ -108,7 +108,7 @@ exports.verify = catchAsync(async (req, res, next) => {
     const user = await User.findOne({ email: email });
   
     if(!user) {
-      res.status(401).json({
+      return res.status(401).json({
         error: "Email was not found",
         message: "Message"
       }); 
@@ -116,7 +116,7 @@ exports.verify = catchAsync(async (req, res, next) => {
   
     // Authenticate user
     if(verification_code != user.verification_code) {
-      res.status(401).json({
+      return res.status(401).json({
         error: "Verification failed",
         message: "Message"
       }); 
@@ -133,7 +133,7 @@ exports.verify = catchAsync(async (req, res, next) => {
       user.verification_status  = true
       user.save((err, user) => {
         if(err) {
-          res.status(401).json({
+          return res.status(401).json({
             error: "Something went wrong",
             message: err
           }); 
@@ -143,7 +143,7 @@ exports.verify = catchAsync(async (req, res, next) => {
     // }
   }
   catch(err){
-    res.status(400).json({
+    return res.status(400).json({
       error: "Something went wrong",
       message: err
     }); 
