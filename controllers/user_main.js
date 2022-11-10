@@ -5,9 +5,9 @@ var expressJwt = require('express-jwt')
 const nodemailer = require('nodemailer');
 const auth = require("../middleware/auth")
 const catchAsync = require('../middleware/catchAsync');
-const sendCookie = require('../utils/sendCookie');
-const sendEmail = require('../utils/sendEmail');
-const ErrorHandler = require('../utils/errorHandler');
+const sendCookie = require('../Utils/sendCookie');
+const sendEmail = require('../Utils/sendEmail');
+const ErrorHandler = require('../Utils/errorHandler');
 
 
 // Get User Details By Id
