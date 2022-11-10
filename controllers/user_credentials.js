@@ -1,13 +1,7 @@
 const User = require("../models/user")
-const {validationResult} = require('express-validator')
-var jwt = require('jsonwebtoken')
-var expressJwt = require('express-jwt')
-const nodemailer = require('nodemailer');
-const auth = require("../middleware/auth")
 const catchAsync = require('../middleware/catchAsync');
 const sendCookie = require('../utils/sendCookie');
 const sendEmail = require('../utils/sendEmail');
-const ErrorHandler = require('../utils/errorHandler');
 
 
 
