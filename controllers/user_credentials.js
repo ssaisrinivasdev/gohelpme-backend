@@ -121,15 +121,15 @@ exports.verify = catchAsync(async (req, res, next) => {
         message: "Message"
       }); 
     }
-    var now = new Date()
-    if(verification_expiry > now){
-      sendEmail(email);
-      res.status(401).json({
-        error: "Verification Code Expired, New verification code sent to your email please verify again",
-        message: "Message"
-      }); 
-    }
-    else{
+    // var now = new Date()
+    // if(verification_expiry > now){
+    //   sendEmail(email);
+    //   res.status(401).json({
+    //     error: "Verification Code Expired, New verification code sent to your email please verify again",
+    //     message: "Message"
+    //   }); 
+    // }
+    // else{
       user.verification_status  = true
       user.save((err, user) => {
         if(err) {
@@ -140,7 +140,7 @@ exports.verify = catchAsync(async (req, res, next) => {
         }
         sendCookie(user, 201, res);
       });
-    }
+    // }
   }
   catch(err){
     res.status(400).json({
