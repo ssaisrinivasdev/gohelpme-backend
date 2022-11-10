@@ -6,7 +6,7 @@ var expressJwt = require('express-jwt')
 const nodemailer = require('nodemailer');
 const catchAsync = require("../middleware/catchAsync")
 const auth = require("../middleware/auth")
-const sendCookie = require('../Utils/sendCookie');
+const sendCookie = require('../utils/sendCookie');
 
 //Done
 // Get post Details By Id
