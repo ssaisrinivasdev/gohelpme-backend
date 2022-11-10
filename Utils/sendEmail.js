@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async (toMail) => {
 
-    var verifiation_code = Math.random() * (999999 - 100000) + 100000
+  var verifiation_code = Math.random() * (999999 - 100000) + 100000
 
   //TODO: Send code to mail
   const mailTransporter = nodemailer.createTransport({
