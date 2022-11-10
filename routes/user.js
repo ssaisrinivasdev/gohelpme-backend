@@ -1,17 +1,26 @@
 const express = require("express")
-const { register, login, verify,forgotpassword } = require("../controllers/user")
+const { register, login, verify,sendVerificationCode, logoutUser, resetPassword } = require("../controllers/user_credentials")
+const {getUser, updateUser, updateFollowStatus, DummyLogin} = require("../controllers/user_main")
 const {check} = require('express-validator')
 const router = express.Router()
+const { isAuthenticated } = require('../middleware/auth');
 
-router.post('/register', [
-  check("name", "Name should be atleast 3 characters").isLength({min: 3}),
-  check("email", "Email should be valid").isEmail(),
-  check("password", "Password should be atleast 8 characters").isLength({min: 8}),
-] ,register)
-
+//User Credentials routes:
+router.post('/register',register)
 router.post('/login', login)
+router.post('/logoutUser', logoutUser)
 router.post('/verify', verify)
-router.post('/forgotPassword', forgotpassword)
+router.post('/sendVerificationCode', sendVerificationCode)
+router.put('/resetpassword',isAuthenticated, resetPassword)
 
+//User Main routes:
+//Done
+router.get('/user/:id', isAuthenticated ,getUser)
+//Done
+router.put('/update/user', isAuthenticated ,updateUser)
+//OnHold
+router.put('/follow-or-unfollow',isAuthenticated,updateFollowStatus)
+
+router.post('/dummy',isAuthenticated, DummyLogin)
 
 module.exports = router

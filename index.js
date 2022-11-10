@@ -6,9 +6,11 @@ const User = require('./models/user')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 require('dotenv').config();
+var cookieParser = require('cookie-parser')
 
 app.use(cors())
 app.use(express.json())
+app.use(cookieParser())
 
 
 const connectionString = process.env['CONNECTION_STRING']
@@ -23,10 +25,13 @@ mongoose.connect(connectionString)
 })
 
 //Import the routes
-const userRoutes = require("./routes/user")
+const userRoutes = require('./routes/user');
+const postRoutes = require('./routes/post');
+
 
 // Using routes
-app.use('/api', userRoutes) 
+app.use('/api', userRoutes);
+app.use('/api', postRoutes);
 
 
 

@@ -1,14 +1,30 @@
 const jwt = require ("jsonwebtoken")
-const UserCred = require("../models/user")
+const User = require("../models/user")
+const ErrorHandler = require("../utils/errorHandler");
+const catchAsync = require("./catchAsync");
 
-const auth = async (req, res, next)=>{
+
+exports.isAuthenticated = catchAsync(async (req, res, next) => {
+    
     try{
-        const token = req.cookies.jwt;
-        const verifyUser = jwt.verify(token,"secret123")
-        console.log(verifyUser)
-    }catch(error){
-        res.status(401).send(error);
-    }
-}
+        const { token } = req.cookies;
 
-module.exports = auth;
+        if(!token) {
+            return res.status(401).json({
+                error: "Please Login to Access",
+                Message: "Error"
+            });
+        }
+
+        const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await User.findById(decodedData.id);
+
+        next();
+    }
+    catch(err)
+    {
+        return res.status(401).json({
+            error: "Please Login to Access"
+        })
+    }
+});

@@ -1,60 +1,60 @@
 const mongoose = require("mongoose");
-const crypto = require("crypto");
-const { v1: uuidv1 } = require('uuid');
+const Schema = mongoose.Schema;
+const catergoryArray = ["Medical","Memorial","Emergency","NonProfit","FinancialEmergency","Animals","Environment",
+"Business","Community","Competition","Creative","Event","Faith","Family","Sports","Travel",
+"Volunteer","Wishes","Others"];
 
 //TODO: To add the commented properties
 const Post = new mongoose.Schema({
-		owner_id: {
-			type: String,
-			required: true,
-			maxlength: 32,
-			required: true,
-			trim: true
+		owner:{
+			type: Schema.Types.ObjectId,
+			ref: 'user-data'
 		},
 		title: {
 			type: String,
-			maxlength: 32,
+			maxlength: 60,
             required: true,
-			trim: true
-		},
-		short_description: {
-			type: String,
 			trim: true,
 			unique: true
 		},
 		long_description: {
 			type: String,
+			maxlength: 800, 
+			required: true,
 			trim: true,
-			unique: true
-		},
-        funds: {
-			type: String,   //Array
-		},
-        category: {
-			type: String,   //Enum
+			unique: false
 		},
         fund_verified_documents: {
-			type: String    //Array
+			type: [String]    //Array
 		},
         currency: {
 			type: String    //Currency
 		},
         is_verified_status:     Boolean,
-        fundtarget:             Number,
-		liked_count:            Number,
-        phone:                  Number,
+		post_type: {
+			type: String,
+			enum: ["Individual", "Charity","Others"],
+			required: true,
+		},
+		category: {
+			type: String,
+			enum: catergoryArray,
+			required: true,
+		},        
+		goal:                   Number,
+        currentValue:           Number,
+        percent:                Number,
+        totalDonationsCount:    Number,
+		phone:                  Number,
         Address:                String,
         Country:                String,
         Zip_code:               String,
         city:                   String,
-        tags:                   Array[5]
+        tags: [String]
 	},
 	{timestamps: true},
-	{ collection: 'user-data' 
-})
+)
 
-
-
-const model = mongoose.model('user-datas', User)
+const model = mongoose.model('fundPost', Post)
 
 module.exports = model
