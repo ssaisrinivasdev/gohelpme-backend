@@ -144,7 +144,7 @@ exports.createFund = (async (req, res, next)=>{
     if(req.files){
       fund.images = req.files.map(file => file.location);
     }
-    fund.owner = user._id;
+    fund.owner = user.id;
     await fund.save();
     user.created_funds.push(fund.id);
     await user.save();
