@@ -52,7 +52,7 @@ exports.register = catchAsync(async (req, res, next) => {
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err
+      message: err.toString(),
     }); 
   }
 });
@@ -94,7 +94,7 @@ exports.login = catchAsync(async (req, res, next) => {
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err
+      message: err.toString(),
     }); 
   }
 });
@@ -135,7 +135,7 @@ exports.verify = catchAsync(async (req, res, next) => {
         if(err) {
           return res.status(401).json({
             error: "Something went wrong",
-            message: err
+            message: err.toString(),
           }); 
         }
         sendCookie(user, 201, res);
@@ -145,7 +145,7 @@ exports.verify = catchAsync(async (req, res, next) => {
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err
+      message: err.toString(),
     }); 
   }
 });
@@ -165,7 +165,7 @@ exports.logoutUser = catchAsync(async (req, res, next) => {
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err
+      message: err.toString(),
   });
   }
   
@@ -203,7 +203,7 @@ exports.sendVerificationCode  = catchAsync(async (req, res, next) => {
       if(err){
         return res.status(400).json({
           error: "Something went wrong",
-          message: err
+          message: err.toString(),
         });
       }
       return res.status(200).json({
@@ -214,7 +214,7 @@ exports.sendVerificationCode  = catchAsync(async (req, res, next) => {
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err
+      message: err.toString(),
     });
   }
 });
@@ -249,7 +249,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err
+      message: err.toString(),
     });
   }
 });

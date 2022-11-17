@@ -80,7 +80,7 @@ exports.searchFunds = catchAsync(async (req, res, next) => {
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err
+      message: err.toString(),
     }); 
   }
 });
@@ -167,13 +167,13 @@ exports.createFund = (async (req, res, next)=>{
 //Search Funds
 exports.fundsByCategory = catchAsync(async (req, res, next) => {
   try{
-    var page = req.query.page <= 0 ? 1 : req.query.page;
+    var page = (req.query.page == null ? 0 : req.query.page) <= 0 ? 1 : req.query.page;
   
     var rangeStart = ((page - 1) * 3)+1;
-    if(req.query.category){
+    // if(req.query.category){
       const funds = await Fund.find({
           category: {
-            $regex: req.query.category,
+            $regex: req.query.category== null ? "": req.query.category,
             $options: "i",
         }
       })
@@ -185,18 +185,18 @@ exports.fundsByCategory = catchAsync(async (req, res, next) => {
         success: true,
         funds,
       });
-    }
-    else{
-      return res.status(200).json({
-        success: true,
-        result: null,
-      });
-    }
+    // }
+    // else{
+    //   return res.status(200).json({
+    //     success: true,
+    //     result: null,
+    //   });
+    // }
   }
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err
+      message: err.toString(),
     }); 
   }
 });
@@ -236,7 +236,7 @@ exports.updateFund = catchAsync(async (req, res, next) => {
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err
+      message: err.toString(),
     }); 
   } 
 });
