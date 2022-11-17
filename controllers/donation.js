@@ -1,5 +1,5 @@
 const User = require("../models/user");
-const Fund = require("../models/Fund");
+const Fund = require("../models/fund");
 const Donation = require("../models/donation");
 const catchAsync = require("../middleware/catchAsync")
 
