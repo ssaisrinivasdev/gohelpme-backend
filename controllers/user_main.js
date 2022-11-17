@@ -14,22 +14,25 @@ const ErrorHandler = require('../utils/errorHandler');
 exports.getUser = catchAsync(async (req, res, next) => {
 
     try{
-        if(req.params.id != req.user.id){
+        console.log()
+        if(req.params.id != req.user._id){
             res.status(404).json({
               error: "User not found",
               message: "Error"
             }); 
         }
         else{
-            const user = await User.findById(req.params.id)
+            const userf = await User.findById(req.params.id).select("+followed_funds")
     
             const response = {
-                "email": user.email,
-                "name": user.name,
-                "lastname": user.lastname,
-                "followed_posts": user.followed_posts,
-                "created_posts": user.created_posts,
-                "verification_code": user.verification_code
+                "email": userf.email,
+                "name": userf.name,
+                "lastname": userf.lastname,
+                "followed_funds": userf.followed_funds,
+                "created_funds": userf.created_funds,
+                "donated_funds": userf.donations,
+                "verification_code": userf.verification_code,
+                "verification_status": userf.verification_status
             }
     
             res.status(200).json({
@@ -39,8 +42,8 @@ exports.getUser = catchAsync(async (req, res, next) => {
         }
     }catch(err){
         res.status(404).json({
-            error: "User not found",
-            message: err
+            error: "Something went wrong",
+            message: err.toString()
           }); 
     }    
 });
@@ -80,39 +83,70 @@ exports.updateUser = catchAsync(async (req, res, next) => {
     catch(err){
         res.status(404).json({
             error: "Something went wrong",
-            message: err
+            message: err.toString(),
         }); 
     }
 });
 
 exports.DummyLogin= catchAsync(async (req, res, next) => {
-    res.status(200).json({
-        success: true,
-    });
+    // const fund = await User.findById('636d5ec24e96ef98e64c6e76').populate('created_funds').populate('followed_funds');
+    // res.status(200).json({
+    //     fund,
+    // });
+    res.send(`<html><body><h1>Thanks for your order,!</h1></body></html>`);
+
+    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+    console.log(req.params.id)
+    const session = await stripe.checkout.sessions.retrieve(req.params.id);
+    console.log(session);
+    res.send(`<html><body><h1>Thanks for your order, ${session.customer_details.name}!</h1></body></html>`);
+    const customer = await stripe.customers.retrieve(session.customer_details);
+    
+
 });
 
-//Not Done
-//Follow and Unfollow the post
-exports.updateFollowStatus = catchAsync(async (req, res, next) => {
+//Done
+//Follow and Unfollow the fund
+exports.followUnfollowPost = catchAsync(async (req, res, next) => {
 
-    const user = await User.findById(req.user._id).select("+followed_posts");
+    const user = await User.findById(req.user._id).select("+followed_funds");
 
-    const postId = req.query.post;
-
-    const index = user.followed_posts.indexOf(postId);
-    if (index > -1) {
-        user.followed_posts.splice(index, 1);
+    if (!user) {
+        res.status(404).json({
+            error: "User not logged in",
+            message: "Error",
+        });
     }
-    else{
-        user.followed_posts.push(postId);
-    }
-    
-    await user.save();
 
-    res.status(200).json({
-        success: true,
-        user,
-    });
+    const fund = req.params.id;
+
+    if (!fund) {
+        res.status(404).json({
+            error: "Fund not found",
+            message: "Error",
+        });
+    }
+
+    if (user.followed_funds.includes(req.params.id)) {
+        const index = user.followed_funds.indexOf(req.params.id);
+
+        user.followed_funds.splice(index, 1);
+        await user.save();
+
+        return res.status(200).json({
+            message: "Success",
+            status: "Post Unfollowed"
+        });
+    } else {
+        user.followed_funds.push(req.params.id)
+
+        await user.save();
+
+        return res.status(200).json({
+            message: "Success",
+            status: "Post Followed"
+        });
+    }
 });
 
 

@@ -26,12 +26,22 @@ const User = new mongoose.Schema({
 			type: String,
 			required: [true, "Please make sure the password is atleast 8 characters"],
 		},
-		followed_posts: {
-			type: [String]    //Array
-		},
-		created_posts:{
-			type: [String]    //Array
-		},
+		followed_funds: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "fundPost",
+			}
+		],
+		created_funds:[
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "fundPost",
+			}
+		],
+		donations:[{
+			type: Schema.Types.ObjectId,
+			ref: 'donation',
+		}],
 		verification_code:		Number,
 		verification_status: 	Boolean,
 		verification_expiry:	Date,

@@ -21,14 +21,15 @@ const sendCookie = (user = {}, statusCode, res) => {
         "email": user.email,
         "name": user.name,
         "lastname": user.lastname,
-        "followed_posts": user.followed_posts,
-        "created_posts": user.created_posts,
+        "followed_funds": user.followed_funds,
+        "created_funds": user.created_funds,
         "verification_code": user.verification_code,
         "verification_status": user.verification_status,
     }
 
     res.status(statusCode).cookie('token', token, options).json({
         message: "Success",
+        "token": token,
         response,
     });
 }

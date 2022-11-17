@@ -7,7 +7,13 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 require('dotenv').config();
 var cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
+// ...
 
+app.use(express.urlencoded({
+    extended: true
+  }));
+app.use(bodyParser.json());
 app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
@@ -26,12 +32,14 @@ mongoose.connect(connectionString)
 
 //Import the routes
 const userRoutes = require('./routes/user');
-const postRoutes = require('./routes/post');
+const fundRoutes = require('./routes/fund');
+const donationRouters = require('./routes/donation');
 
 
 // Using routes
 app.use('/api', userRoutes);
-app.use('/api', postRoutes);
+app.use('/api', fundRoutes);
+app.use('/api', donationRouters);
 
 
 
