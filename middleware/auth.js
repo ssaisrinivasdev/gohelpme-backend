@@ -23,7 +23,7 @@ exports.isAuthenticated = catchAsync(async (req, res, next) => {
     catch(err)
     {
         return res.status(401).json({
-            error: "Please Login to Access"
+            error: err
         })
     }
 });
