@@ -131,8 +131,6 @@ exports.addFundUpdates = catchAsync(async (req, res, next) => {
 //Create a single post details by the ID.
 exports.createFund = (async (req, res, next)=>{
   try{
-
-    const fund = await Fund.create(req.body);
     
     const user = await User.findById(req.user._id);
 
@@ -142,14 +140,36 @@ exports.createFund = (async (req, res, next)=>{
         message: "Error"
       }); 
     }
-    if(req.files){
-      fund.images = req.files.map(file => file.location);
+
+    const fundData = {
+      owner: user._id,
+      title: req.body.title,
+      long_description: req.body.long_description,
+      images : req.files.map(file => file.location),
+      fund_verified_documents: req.body.fund_verified_documents,
+      curreny: req.body.currency,
+      isverified_status: false,
+      fund_type: req.body.fund_type,
+      category: req.body.category,
+      donations: req.body.donations,
+      curreny: req.body.currency,
+      goal: req.body.goal,
+      currentValue: req.body.currentValue,
+      percent: req.body.percent,
+      totalDonationsCount: req.body.totalDonationsCount,
+      phone: req.body.phone,
+      Address: req.body.Address,
+      Country: req.body.Country,
+      Zip_code: req.body.Zip_code,
+      city: req.body.city,
+      tags: req.body.tags
     }
-    fund.owner = user._id;
-    await fund.save();
-    
+
+    const fund = await Fund.create(fundData);
+
     user.created_funds.push(fund._id);
     await user.save();
+    
     return res.status(201).json({
       message: "Success",
       fund
@@ -158,7 +178,7 @@ exports.createFund = (async (req, res, next)=>{
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err
+      message: err.toString()
     }); 
   }
 });
