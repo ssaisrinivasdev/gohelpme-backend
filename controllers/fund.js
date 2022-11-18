@@ -150,7 +150,6 @@ exports.createFund = (async (req, res, next)=>{
       owner: user.id,
       title: req.body.title,
       long_description: req.body.long_description,
-      images : req.files.map(file => file.location),
       fund_verified_documents: req.body.fund_verified_documents,
       curreny: req.body.currency,
       isverified_status: false,
@@ -171,8 +170,15 @@ exports.createFund = (async (req, res, next)=>{
     }
 
     count++
-
     const fund = await Fund.create(fundData);
+    count++
+    if(req.files){
+      fund.images = req.files.map(file => file.location);
+    }
+    count++
+    await fund.save();
+    count++
+
 
     count++
 
