@@ -131,11 +131,8 @@ exports.addFundUpdates = catchAsync(async (req, res, next) => {
 //Create a single post details by the ID.
 exports.createFund = (async (req, res, next)=>{
   try{
-    var count = 1
     
     const user = await User.findById(req.user.id);
-
-    count++;
 
     if(!user){
       return res.status(404).json({
@@ -143,8 +140,6 @@ exports.createFund = (async (req, res, next)=>{
         message: "Error"
       }); 
     }
-
-    count++;
 
     const fundData = {
       owner: user.id,
@@ -169,18 +164,12 @@ exports.createFund = (async (req, res, next)=>{
       tags: req.body.tags
     }
 
-    count++
     const fund = await Fund.create(fundData);
-    count++
     if(req.files){
       fund.images = req.files.map(file => file.location);
     }
-    count++
+
     await fund.save();
-    count++
-
-
-    count++
 
     user.created_funds.push(fund._id);
     count++
