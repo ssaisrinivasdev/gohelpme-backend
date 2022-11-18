@@ -131,8 +131,11 @@ exports.addFundUpdates = catchAsync(async (req, res, next) => {
 //Create a single post details by the ID.
 exports.createFund = (async (req, res, next)=>{
   try{
+    var count = 1
     
     const user = await User.findById(req.user._id);
+
+    count++;
 
     if(!user){
       return res.status(404).json({
@@ -141,8 +144,10 @@ exports.createFund = (async (req, res, next)=>{
       }); 
     }
 
+    count++;
+
     const fundData = {
-      owner: user._id,
+      owner: user.id,
       title: req.body.title,
       long_description: req.body.long_description,
       images : req.files.map(file => file.location),
@@ -165,11 +170,16 @@ exports.createFund = (async (req, res, next)=>{
       tags: req.body.tags
     }
 
+    count++
+
     const fund = await Fund.create(fundData);
 
+    count++
+
     user.created_funds.push(fund._id);
+    count++
     await user.save();
-    
+    count++
     return res.status(201).json({
       message: "Success",
       fund
@@ -178,7 +188,8 @@ exports.createFund = (async (req, res, next)=>{
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err.toString()
+      message: err.toString(),
+      "rowcount": count,
     }); 
   }
 });
