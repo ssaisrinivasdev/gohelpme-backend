@@ -135,6 +135,7 @@ exports.createFund = (async (req, res, next)=>{
     const fund = await Fund.create(req.body);
     
     const user = await User.findById(req.user._id);
+
     if(!user){
       return res.status(404).json({
         error: "User not found",
@@ -144,9 +145,10 @@ exports.createFund = (async (req, res, next)=>{
     if(req.files){
       fund.images = req.files.map(file => file.location);
     }
-    fund.owner = user.id;
+    fund.owner = user._id;
     await fund.save();
-    user.created_funds.push(fund.id);
+    
+    user.created_funds.push(fund._id);
     await user.save();
     return res.status(201).json({
       message: "Success",
@@ -154,11 +156,9 @@ exports.createFund = (async (req, res, next)=>{
     });
   }
   catch(err){
-    console.log(err.toString());
-
     return res.status(400).json({
       error: "Something went wrong",
-      message: err.toString()
+      message: err
     }); 
   }
 });
