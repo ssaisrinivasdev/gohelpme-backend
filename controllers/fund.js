@@ -69,7 +69,7 @@ exports.searchFunds = catchAsync(async (req, res, next) => {
       }]
     })
     .sort({ _id: -1 })
-    .skip(rangeStart)
+    .skip(rangeStart-1)
     .limit(3);
       
     return res.status(200).json({
@@ -174,12 +174,12 @@ exports.fundsByCategory = catchAsync(async (req, res, next) => {
     // if(req.query.category){
       const funds = await Fund.find({
           category: {
-            $regex: req.query.category== null ? "": req.query.category,
+            $regex: req.query.category == null ? "": req.query.category,
             $options: "i",
         }
       })
       .sort({ _id: -1 })
-      .skip(rangeStart)
+      .skip(rangeStart-1)
       .limit(3);
       
       return res.status(200).json({

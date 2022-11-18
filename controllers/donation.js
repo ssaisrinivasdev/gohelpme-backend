@@ -99,8 +99,8 @@ exports.payment = catchAsync(async (req, res, next)=>{
       },
       submit_type: 'donate',
       mode: 'payment',
-      cancel_url: "http://localhost:3000/cancel/{CHECKOUT_SESSION_ID}",
-      success_url: "http://localhost:3000/success/{CHECKOUT_SESSION_ID}",
+      cancel_url: "http://gohelpme.online/cancel/{CHECKOUT_SESSION_ID}",
+      success_url: "http://gohelpme.online/success/{CHECKOUT_SESSION_ID}",
 
     });
     console.log(session.url)
