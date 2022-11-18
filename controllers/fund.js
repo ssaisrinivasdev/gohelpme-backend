@@ -133,7 +133,7 @@ exports.createFund = (async (req, res, next)=>{
   try{
     var count = 1
     
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user.id);
 
     count++;
 
