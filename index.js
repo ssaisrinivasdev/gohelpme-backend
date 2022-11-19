@@ -74,6 +74,6 @@ app.use('/api', donationRouters);
 // })
 
 
-app.listen(process.env['PORT'], () => {
-	console.log('Server started on '+process.env['PORT'])
+app.listen(8000, () => {
+	console.log('Server started on '+8000)
 })
