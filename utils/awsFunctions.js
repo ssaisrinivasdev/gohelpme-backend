@@ -39,7 +39,7 @@ const fundDocsS3Config = multerS3({
 exports.uploadFundImages = multer({
     storage: fundImgS3Config,
     limits: {
-        fileSize: 1024 * 1024 * 10   //2 mb
+        fileSize: 1024 * 1024 * 10   //10 mb
     }
 });
 
