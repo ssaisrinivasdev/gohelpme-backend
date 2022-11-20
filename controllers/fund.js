@@ -132,7 +132,7 @@ exports.addFundUpdates = catchAsync(async (req, res, next) => {
 exports.createFund = (async (req, res, next)=>{
   const count = 1
   try{
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     count++
     if(!user){
       return res.status(404).json({
@@ -184,6 +184,7 @@ exports.createFund = (async (req, res, next)=>{
     return res.status(400).json({
       error: "Something went wrong",
       message: err.toString(),
+      "user": req.user,
       "rowcount": count,
     }); 
   }
