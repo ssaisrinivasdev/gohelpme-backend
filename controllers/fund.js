@@ -172,9 +172,9 @@ exports.createFund = (async (req, res, next)=>{
     await fund.save();
 
     user.created_funds.push(fund._id);
-    count++
+    
     await user.save();
-    count++
+    
     return res.status(201).json({
       message: "Success",
       fund
@@ -183,8 +183,7 @@ exports.createFund = (async (req, res, next)=>{
   catch(err){
     return res.status(400).json({
       error: "Something went wrong",
-      message: err.toString(),
-      "rowcount": count,
+      message: err.toString()
     }); 
   }
 });

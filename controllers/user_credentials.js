@@ -74,14 +74,14 @@ exports.login = catchAsync(async (req, res, next) => {
       }
 
       // Authenticate user
-      if(!user.authenticate(password)) {
+      if(!(await user.authenticate(password))) {
         return res.status(400).json({
           error: "Email and password do not match",
           message: "Error"
         })
       }
 
-      if(!user.isVerified()) {
+      if(!(await user.isVerified())) {
         return res.status(400).json({
           error: "Verification failed",
           message: "Error"

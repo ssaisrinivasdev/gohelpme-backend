@@ -53,7 +53,7 @@ const User = new mongoose.Schema({
 
 //Making password encrypted:
 User.virtual("password")
-	.set(async function(password) {
+	.set(async function (password) {
 		this._password = password
 		this.salt = uuidv1()
 		this.encry_password = await this.securePassword(password)
@@ -66,9 +66,9 @@ User.virtual("password")
 User.methods = {
 
   //returns whether password is correct or incorrect	
-  authenticate: async function(plainpassword) {
-    return await this.securePassword(plainpassword) === this.encry_password
-  },
+	authenticate: async function (plainpassword) {
+		return await this.securePassword(plainpassword) === this.encry_password
+	},
 
   securePassword: async function(plainpassword) {
     if(!plainpassword || plainpassword.length < 8) 
