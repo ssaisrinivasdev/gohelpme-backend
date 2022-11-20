@@ -142,7 +142,7 @@ exports.createFund = (async (req, res, next)=>{
     }
 
     const fundData = {
-      owner: user.id,
+      owner: user._id,
       title: req.body.title,
       long_description: req.body.long_description,
       fund_verified_documents: req.body.fund_verified_documents,
