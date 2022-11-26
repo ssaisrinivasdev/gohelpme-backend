@@ -20,6 +20,6 @@ router.put('/update/user', isAuthenticated ,updateUser)
 //Done
 router.put('/followfund/:id',isAuthenticated,updateFollowStatus)
 
-router.get('/dummy', DummyLogin)
+router.get('/dummy/:category', DummyLogin)
 
 module.exports = router

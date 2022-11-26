@@ -48,6 +48,10 @@ exports.successPayment = catchAsync(async (req, res, next) => {
   const donationLog = await Donation.create(donationLogData);
   // await donationLog.save();
   console.log(donationLog.id);
+  fund.currentValue += parseInt(session.amount_total)
+  const per =  ( 100 * fund.currentValue ) / fund.goal 
+  fund.percent = per >= 100 ? 100 : per;
+  fund.totalDonationsCount += 1;
   fund.donations.push(donationLog.id);
   user.donations.push(donationLog.id);
   await fund.save();

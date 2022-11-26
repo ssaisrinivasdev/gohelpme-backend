@@ -39,7 +39,7 @@ const User = new mongoose.Schema({
 			}
 		],
 		donations:[{
-			type: Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: 'donation',
 		}],
 		verification_code:		Number,

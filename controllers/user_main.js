@@ -1,4 +1,5 @@
 const User = require("../models/user")
+const Fund = require("../models/fund");
 const {validationResult} = require('express-validator')
 var jwt = require('jsonwebtoken')
 var expressJwt = require('express-jwt')
@@ -8,6 +9,7 @@ const catchAsync = require('../middleware/catchAsync');
 const sendCookie = require('../utils/sendCookie');
 const sendEmail = require('../utils/sendEmail');
 const ErrorHandler = require('../utils/errorHandler');
+
 
 
 // Get User Details By Id
@@ -22,8 +24,8 @@ exports.getUser = catchAsync(async (req, res, next) => {
             }); 
         }
         else{
-            const userf = await User.findById(req.params.id).select("+followed_funds")
-    
+            const userf = await User.findById(req.params.id).populate('created_funds','createdAt title long_description _id verification_status images goal currentValue percent ')//.populate('donated_funds')
+            
             const response = {
                 "email": userf.email,
                 "name": userf.name,
@@ -93,6 +95,92 @@ exports.DummyLogin= catchAsync(async (req, res, next) => {
     // res.status(200).json({
     //     fund,
     // });
+    const category = req.params.category == "all" ? "" : req.params.category;
+
+    console.log(req.params.category)
+    const funds =  req.params.category == "all" ? 
+                (   
+                    await Fund.aggregate(
+                        [
+                            {
+                            $facet : {
+                                InProgress : [
+                                    { $match : {
+                                        $and:[
+                                            {"verification_status" : "InProgress" }
+                                        ]
+                                        } 
+                                    },
+                                    { $group : { _id : null, count : {$sum : 1} } },
+                                ],
+                                Approved : [
+                                    { $match : {
+                                        $and:[
+                                            {"verification_status" : "Approved" }
+                                        ]
+                                        } 
+                                    },
+                                    { $group : { _id : null, count : {$sum : 1} } },
+                                ],
+                                Rejected : [
+                                    { $match : {
+                                        $and:[
+                                            {"verification_status" : "Rejected" }
+                                        ]
+                                        } 
+                                    },
+                                    { $group : { _id : null, count : {$sum : 1} } },
+                                ]
+                            }
+                            }
+                        ]
+                    )    
+                )
+                :
+                (
+                    await Fund.aggregate(
+                        [
+                            {
+                            $facet : {
+                                InProgress : [
+                                    { $match : {
+                                        $and:[
+                                            {"category" : category },
+                                            {"verification_status" : "InProgress" }
+                                        ]
+                                        } 
+                                    },
+                                    { $group : { _id : null, count : {$sum : 1} } },
+                                ],
+                                Approved : [
+                                    { $match : {
+                                        $and:[
+                                            {"category" : category },
+                                            {"verification_status" : "Approved" }
+                                        ]
+                                        } 
+                                    },
+                                    { $group : { _id : null, count : {$sum : 1} } },
+                                ],
+                                Rejected : [
+                                    { $match : {
+                                        $and:[
+                                            {"category" : category },
+                                            {"verification_status" : "Rejected" }
+                                        ]
+                                        } 
+                                    },
+                                    { $group : { _id : null, count : {$sum : 1} } },
+                                ]
+                            }
+                            }
+                        ]
+                    )
+                )
+            // console.log(JSON.stringify(funds));
+            return res.json(funds)
+
+
     res.send(`<html><body><h1>Thanks for your order,!</h1></body></html>`);
 
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);

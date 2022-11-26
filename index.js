@@ -35,44 +35,13 @@ mongoose.connect(connectionString)
 const userRoutes = require('./routes/user');
 const fundRoutes = require('./routes/fund');
 const donationRouters = require('./routes/donation');
-
+const dashboardRouters = require('./routes/dashboard');
 
 // Using routes
 app.use('/api', userRoutes);
 app.use('/api', fundRoutes);
 app.use('/api', donationRouters);
-
-
-
-// app.post('/api/login', async (req, res) => {
-// 	const user = await User.findOne({
-// 		email: req.body.email,
-// 	})
-
-// 	if (!user) {
-// 		return { status: 'error', error: 'Invalid login' }
-// 	}
-
-// 	const isPasswordValid = await bcrypt.compare(
-// 		req.body.password,
-// 		user.password
-// 	)
-
-// 	if (isPasswordValid) {
-// 		const token = jwt.sign(
-// 			{
-// 				name: user.name,
-// 				email: user.email,
-// 			},
-// 			'secret123'
-// 		)
-
-// 		return res.json({ status: 'ok', user: token })
-// 	} else {
-// 		return res.json({ status: 'error', user: false })
-// 	}
-// })
-
+app.use('/api', dashboardRouters);
 
 app.listen(process.env['PORT'], () => {
 	console.log('Server started on '+process.env['PORT'])

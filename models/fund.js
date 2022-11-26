@@ -33,7 +33,12 @@ const Fund = new mongoose.Schema({
         currency: {
 			type: String    //Currency
 		},
-        is_verified_status:     Boolean,
+        verification_status:{
+			type: String,
+			enum: ["InProgress", "Approved","Rejected"],
+			default: "InProgress",
+		},
+		rejection_reson: 		String,
 		fund_type: {
 			type: String,
 			enum: ["Individual", "Charity","Others"],
@@ -50,9 +55,24 @@ const Fund = new mongoose.Schema({
 		}],
 		currency:				String,
 		goal:                   Number,
-        currentValue:           Number,
-        percent:                Number,
-        totalDonationsCount:    Number,
+        currentValue:{
+			type: Number,
+			default: 0
+		},
+        percent:{
+			type: Number,
+			default: 0
+		},
+        totalDonationsCount:{
+			type: Number,
+			default: 0
+		},
+		// {
+		// 	type: Number,
+		// 	default: function() {
+		// 	  return this.donations.length; 
+		// 	}
+		// },
 		phone:                  Number,
         Address:                String,
         Country:                String,
