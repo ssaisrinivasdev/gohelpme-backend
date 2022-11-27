@@ -36,7 +36,6 @@ exports.successPayment = catchAsync(async (req, res, next) => {
     session_id : session.id,
     donator_id : user._id,
     donator_name : session.metadata.donator_name,
-    donator_comment : session.metadata.donator_comment,
     fund_id : session.metadata.fund_id,
     amount : session.amount_total,
     status : session.status,
@@ -54,7 +53,7 @@ exports.successPayment = catchAsync(async (req, res, next) => {
   fund.totalDonationsCount += 1;
   fund.donations.push(donationLog.id);
   user.donations.push(donationLog.id);
-  await fund.save();
+   await fund.save();
   await user.save();
   return res.status(201).json({
     message: "Success",
@@ -98,8 +97,7 @@ exports.payment = catchAsync(async (req, res, next)=>{
       ],
       metadata: {
       "fund_id": req.body.fund_id,
-      "donator_name": req.body.donator_name,
-      "donator_comment": req.body.donator_comment,
+      "donator_name": req.body.donator_name == "null"  ? (req.user.name + req.user.lastname) : req.body.donator_name,
       },
       submit_type: 'donate',
       mode: 'payment',
