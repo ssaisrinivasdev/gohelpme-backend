@@ -7,7 +7,6 @@ const DonationSchema = new mongoose.Schema({
                 required: true,
         },
         donator_name:           String,
-        donator_comment:        String,
         fund_id: 
         {
                 type: mongoose.Schema.Types.ObjectId,

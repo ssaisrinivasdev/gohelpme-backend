@@ -5,7 +5,7 @@ const router = express.Router()
 const { isAuthenticated } = require('../middleware/auth');
 
 //Payments
-router.put('/payment',payment);
+router.put('/payment',isAuthenticated,payment);
 router.put('/successpayment', isAuthenticated,successPayment);
 router.put('/cancelpayment/:id', cancelPayment);
 

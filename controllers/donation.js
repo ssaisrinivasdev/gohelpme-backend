@@ -37,7 +37,7 @@ exports.successPayment = catchAsync(async (req, res, next) => {
     donator_id : user._id,
     donator_name : session.metadata.donator_name,
     fund_id : session.metadata.fund_id,
-    amount : session.amount_total,
+    amount : (parseInt(session.amount_total))/100,
     status : session.status,
     time : session.created,
     payment_status : session.payment_status,
@@ -47,7 +47,7 @@ exports.successPayment = catchAsync(async (req, res, next) => {
   const donationLog = await Donation.create(donationLogData);
   // await donationLog.save();
   console.log(donationLog.id);
-  fund.currentValue += parseInt(session.amount_total)
+  fund.currentValue += (parseInt(session.amount_total))/100
   const per =  ( 100 * fund.currentValue ) / fund.goal 
   fund.percent = per >= 100 ? 100 : per;
   fund.totalDonationsCount += 1;
