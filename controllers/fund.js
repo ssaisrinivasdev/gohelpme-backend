@@ -15,7 +15,7 @@ exports.getFundDetails = catchAsync(async (req, res, next) => {
   try{
     if(req.params.id != null)
     {
-      const fund = await Fund.findById(req.params.id)
+      const fund = await Fund.findById(req.params.id).populate('donations', 'donator_name amount time payment_status');
 
       return res.status(200).json({
           message: "Success",
