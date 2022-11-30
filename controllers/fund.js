@@ -45,36 +45,42 @@ exports.searchFunds = catchAsync(async (req, res, next) => {
   {
     var page = req.query.page <= 0 ? 1 : req.query.page;
     var rangeStart = ((page - 1) * 6)+1;
-    
-    const funds = await Fund.find({
-      $and: [{
-        $or: [
-          {
-              title: {
-                  $regex: req.query.keyword == null ? "": req.query.keyword,
-                  $options: "i",
-              },
-          },
-          {
-              tags: {
-                  $regex: req.query.keyword == null ? "": req.query.keyword,
-                  $options: "i",
-              }
-          }
-        ],
-        category: {
-          $regex: req.query.category == null ? "": req.query.category,
-          $options: "i",
+    const category = req.query.category == null ? "" : new RegExp(req.query.category,"i");
+    const keyword = new RegExp(req.query.keyword,"i");
+
+    const fundCount = await Fund.aggregate([
+      { 
+        $facet : {
+          metaInfo : [
+            { $match : {
+                        $and: [
+                          {$or:[{ "title" : keyword }, { "tags" : keyword }]},
+                          {"category": category}
+                       ]}
+            },
+            { $group : { _id : null, count : {$sum : 1} } }
+          ],
+          actualData : [
+            { $match : {
+                        $and: [
+                          {$or:[{ "title" : keyword }, { "tags" : keyword }]},
+                          {"category": category}
+                      ]}},
+            { $skip  : rangeStart-1 },
+            { $limit : 6 },
+            {$sort: {_id: -1}}
+          ]
         }
-      }]
-    })
-    .sort({ _id: -1 })
-    .skip(rangeStart-1)
-    .limit(6);
+      }
+    ]);
+    const totalresultsfound = fundCount[0]?.metaInfo[0]?.count == null ? 0 : fundCount[0]?.metaInfo[0]?.count;
       
     return res.status(200).json({
       message: "Success",
-      funds,
+      results: totalresultsfound,
+      current: parseInt(page),
+      pages: totalresultsfound==null ? 0 : (Math.ceil(totalresultsfound/6)),
+      "funds": fundCount[0]?.actualData == null ? '[]' : fundCount[0]?.actualData
     });
 
   }
