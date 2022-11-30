@@ -44,7 +44,7 @@ exports.searchFunds = catchAsync(async (req, res, next) => {
   try
   {
     var page = req.query.page <= 0 ? 1 : req.query.page;
-    var rangeStart = ((page - 1) * 3)+1;
+    var rangeStart = ((page - 1) * 6)+1;
     
     const funds = await Fund.find({
       $and: [{
@@ -70,7 +70,7 @@ exports.searchFunds = catchAsync(async (req, res, next) => {
     })
     .sort({ _id: -1 })
     .skip(rangeStart-1)
-    .limit(3);
+    .limit(6);
       
     return res.status(200).json({
       message: "Success",
@@ -191,7 +191,7 @@ exports.fundsByCategory = catchAsync(async (req, res, next) => {
   try{
     var page = (req.query.page == null ? 0 : req.query.page) <= 0 ? 1 : req.query.page;
   
-    var rangeStart = ((page - 1) * 3)+1;
+    var rangeStart = ((page - 1) * 6)+1;
     // if(req.query.category){
       const funds = await Fund.find({
           category: {
@@ -201,7 +201,7 @@ exports.fundsByCategory = catchAsync(async (req, res, next) => {
       })
       .sort({ _id: -1 })
       .skip(rangeStart-1)
-      .limit(3);
+      .limit(6);
       
       return res.status(200).json({
         success: true,
