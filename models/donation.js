@@ -22,7 +22,9 @@ const DonationSchema = new mongoose.Schema({
         time:                   Date,
         payment_status:         String,
         payment_type:           String,
-	})
+	},
+        {timestamps: true},
+        )
 
 const model = mongoose.model('donation', DonationSchema)
 

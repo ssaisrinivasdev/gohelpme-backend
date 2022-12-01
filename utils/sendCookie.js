@@ -21,6 +21,7 @@ const sendCookie = (user = {}, statusCode, res) => {
         "email": user.email,
         "name": user.name,
         "lastname": user.lastname,
+        "donated_funds": user.donations,
         "followed_funds": user.followed_funds,
         "created_funds": user.created_funds,
         "verification_code": user.verification_code,
