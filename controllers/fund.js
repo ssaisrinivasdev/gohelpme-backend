@@ -35,7 +35,7 @@ exports.getFundDetails = catchAsync(async (req, res, next) => {
           }
         }
       }catch(err){
-        following_status = err 
+        following_status = err.toString()
       }
 
 
