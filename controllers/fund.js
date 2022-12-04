@@ -24,20 +24,18 @@ exports.getFundDetails = catchAsync(async (req, res, next) => {
           following_status = "not_loggedin"
         }else{
           const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-          req.user = await User.findById(decodedData.id);
-          const user = await User.findById(req.user._id);
+          const user = await User.findById(decodedData._id);
           console.log(user.followed_funds)
           if(!user){
             following_status = "not_loggedin"
           }else if(user.followed_funds?.includes(req.params.id)){
-            
             following_status = "following"
           }else{
             following_status = "not_following"
           }
         }
       }catch(err){
-        following_status = "not_loggedin" 
+        following_status = err 
       }
 
 
