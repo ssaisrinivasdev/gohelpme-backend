@@ -1,5 +1,6 @@
 const User = require("../models/user")
 const Fund = require("../models/fund");
+const Donations = require("../models/donation")
 const {validationResult} = require('express-validator')
 var jwt = require('jsonwebtoken')
 var expressJwt = require('express-jwt')
@@ -15,11 +16,37 @@ exports.getFundDetails = catchAsync(async (req, res, next) => {
   try{
     if(req.params.id != null)
     {
+      var following_status = "not_following";
+      try{
+        console.log("started")
+        const { token } = req.cookies;
+        if(!token) {
+          following_status = "not_loggedin"
+        }else{
+          const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+          req.user = await User.findById(decodedData.id);
+          const user = await User.findById(req.user._id);
+          console.log(user.followed_funds)
+          if(!user){
+            following_status = "not_loggedin"
+          }else if(user.followed_funds?.includes(req.params.id)){
+            
+            following_status = "following"
+          }else{
+            following_status = "not_following"
+          }
+        }
+      }catch(err){
+        following_status = "not_loggedin" 
+      }
+
+
       const fund = await Fund.findById(req.params.id).populate('donations', 'donator_name amount time payment_status');
 
       return res.status(200).json({
           message: "Success",
           fund,
+          following_status
       });
 
     }
@@ -90,6 +117,43 @@ exports.searchFunds = catchAsync(async (req, res, next) => {
       message: err.toString(),
     }); 
   }
+});
+
+
+exports.getTrendingFunds= catchAsync(async (req, res, next) => {
+  const funds = await Donations.aggregate([
+    { 
+      $facet : {
+        donations : [
+          { $match: { "time": { $gt: new Date(Date.now() - 24*60*60 * 1000*7) } } },
+          {
+            $group:{
+              _id:"$fund_id",
+              "amount": {
+                $sum: "$amount"
+              },
+              "donation_count": { $sum : 1 }
+            }
+          },
+          {
+            $lookup:{
+              from: "fundposts",
+              localField: "_id",
+              foreignField: "_id",
+              as: "funds"
+            }
+          },
+          { $sort : { donation_count : -1, amount: -1} }
+        ]
+      }
+    }
+  ]);
+
+   return res.status(200).json({
+      message: "Success",
+      funds
+    });
+
 });
 
 

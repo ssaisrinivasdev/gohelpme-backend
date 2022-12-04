@@ -1,6 +1,6 @@
 const express = require("express")
 const { getAllFunds, createFund, getFundDetails, searchFunds, fundsByCategory, addFundUpdates,
-    updateFund} = require("../controllers/fund")
+    updateFund,getTrendingFunds} = require("../controllers/fund")
 const {check} = require('express-validator')
 const router = express.Router()
 const { isAuthenticated } = require('../middleware/auth');
@@ -15,6 +15,7 @@ router.put('/addfundUpdates/:id',isAuthenticated, addFundUpdates)
 router.get('/funds/search',searchFunds);
 
 router.put('/updatefund/:id',isAuthenticated,updateFund);
+router.get('/trendingfunds',getTrendingFunds) 
 
 
 

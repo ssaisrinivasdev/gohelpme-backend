@@ -53,6 +53,19 @@ const Fund = new mongoose.Schema({
 			type: Schema.Types.ObjectId,
 			ref: 'donation',
 		}],
+		first_donated:[{
+			type: Schema.Types.ObjectId,
+			ref: 'donation',
+		}],
+		highest_donated:[{
+			type: Schema.Types.ObjectId,
+			ref: 'donation',
+		}],
+		recent_donated:[{
+			type: Schema.Types.ObjectId,
+			ref: 'donation',
+		}],
+		highest_donated_amount: Number,
 		currency:				String,
 		goal:                   Number,
         currentValue:{

@@ -9,6 +9,8 @@ router.put('/admin',admin);
 router.put('/add-subadmin',addSubAdmin);
 router.put('/remove-subAdmin/:id',removeSubAdmin);
 
+//router.get('/')
+
 
 
 module.exports = router

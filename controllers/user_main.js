@@ -26,7 +26,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
         else{
             const userf = await User.findById(req.params.id)
                             .populate('created_funds','createdAt title long_description _id verification_status images goal currentValue percent ')
-                            .populate('donations','createdAt title long_description _id verification_status images goal currentValue percent ')
+                            .populate('donated_funds','createdAt title long_description _id verification_status images goal currentValue percent ')
                             .populate('followed_funds','createdAt title long_description _id verification_status images goal currentValue percent ')
             
             const response = {
@@ -35,7 +35,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
                 "lastname": userf.lastname,
                 "followed_funds": userf.followed_funds,
                 "created_funds": userf.created_funds,
-                "donated_funds": userf.donations,
+                "donated_funds": userf.donated_funds,
                 "verification_code": userf.verification_code,
                 "verification_status": userf.verification_status
             }

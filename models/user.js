@@ -38,6 +38,12 @@ const User = new mongoose.Schema({
 				ref: "fundPost",
 			}
 		],
+		donated_funds:[
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "fundPost",
+			}
+		], 
 		donations:[{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'donation',

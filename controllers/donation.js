@@ -15,50 +15,67 @@ exports.successPayment = catchAsync(async (req, res, next) => {
   );
 
   console.log(session);
-
   const user = await User.findById(req.user._id);
-  const fund = await Fund.findById(session.metadata.fund_id);
-  if(!user){
+
+  if(!(req.user._id == session.metadata.donater_id)||(!user)){
     return res.status(404).json({
-      error: "User not found",
+      error: "Invalid user for payment",
       message: "Error"
     }); 
   }
-  if(!fund){
-    return res.status(404).json({
-      error: "Fund not found",
-      message: "Error"
-    }); 
-  }
+  else
+  {
+    const fund = await Fund.findById(session.metadata.fund_id);
+    if(!user){
+      return res.status(404).json({
+        error: "User not found",
+        message: "Error"
+      }); 
+    }
+    if(!fund){
+      return res.status(404).json({
+        error: "Fund not found",
+        message: "Error"
+      }); 
+    }
+    const amount = (parseInt(session.amount_total))/100;
+    const donationLogData = {
+      currency: session.currency,
+      session_id : session.id,
+      donator_id : user._id,
+      donator_name : session.metadata.donator_name,
+      fund_id : session.metadata.fund_id,
+      amount : amount,
+      status : session.status,
+      time : session.created,
+      payment_status : session.payment_status,
+      payment_type : session.payment_type,
+    }
 
-  const donationLogData = {
-    currency: session.currency,
-    session_id : session.id,
-    donator_id : user._id,
-    donator_name : session.metadata.donator_name,
-    fund_id : session.metadata.fund_id,
-    amount : (parseInt(session.amount_total))/100,
-    status : session.status,
-    time : session.created,
-    payment_status : session.payment_status,
-    payment_type : session.payment_type,
+    const donationLog = await Donation.create(donationLogData);
+    // await donationLog.save();
+    console.log(donationLog.id);
+    fund.currentValue += amount
+    const per =  ( 100 * fund.currentValue ) / fund.goal 
+    fund.percent = per >= 100 ? 100 : per;
+    fund.totalDonationsCount += 1;
+    if(fund.donations==null || fund.first_donated==null){
+      fund.first_donated.push(donationLog.id)
+    }
+    (fund.recent_donated == null) ? (fund.recent_donated.push(donationLog.id)) : (fund.recent_donated[0] = donationLog.id)
+    (fund.highest_donated == null) ? (fund.highest_donated.push(donationLog.id), fund.highest_donated_amount = amount) : (
+      (fund.highest_donated_amount >= amount) ? (fund.highest_donated[0] = donationLog.id, fund.highest_donated_amount = amount) : ""
+    )
+    user.donations.push(donationLog.id);
+    fund.donations.push(donationLog.id);
+    user.created_funds.push(donationLog.fund_id);
+    await fund.save();
+    await user.save();
+    return res.status(201).json({
+      message: "Success",
+      donationLog
+    });
   }
-
-  const donationLog = await Donation.create(donationLogData);
-  // await donationLog.save();
-  console.log(donationLog.id);
-  fund.currentValue += (parseInt(session.amount_total))/100
-  const per =  ( 100 * fund.currentValue ) / fund.goal 
-  fund.percent = per >= 100 ? 100 : per;
-  fund.totalDonationsCount += 1;
-  fund.donations.push(donationLog.id);
-  user.donations.push(donationLog.id);
-   await fund.save();
-  await user.save();
-  return res.status(201).json({
-    message: "Success",
-    donationLog
-  });
 });
 
 exports.cancelPayment = catchAsync(async (req, res, next) => {
@@ -96,6 +113,7 @@ exports.payment = catchAsync(async (req, res, next)=>{
         }
       ],
       metadata: {
+      "donater_id": req.user._id,
       "fund_id": req.body.fund_id,
       "donator_name": req.body.donator_name == "null"  ? (req.user.name + req.user.lastname) : req.body.donator_name,
       },
