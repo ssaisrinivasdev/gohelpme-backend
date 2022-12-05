@@ -20,9 +20,12 @@ exports.getFundDetails = catchAsync(async (req, res, next) => {
       try{
         console.log("started")
         const { token } = req.cookies;
-        if(!token) {
-          following_status = "not_there"
-        }else{
+        if(!token) 
+        {
+          following_status = token
+        }
+        else
+        {
           const decodedData = jwt.verify(token, process.env.JWT_SECRET);
           const user = await User.findById(decodedData.id);
           if(!user)
