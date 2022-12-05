@@ -22,7 +22,7 @@ exports.getFundDetails = catchAsync(async (req, res, next) => {
         const { token } = req.cookies;
         if(!token) 
         {
-          following_status = token
+          following_status = "not_loggedin"
         }
         else
         {
