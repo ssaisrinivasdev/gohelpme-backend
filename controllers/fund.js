@@ -21,15 +21,20 @@ exports.getFundDetails = catchAsync(async (req, res, next) => {
         console.log("started")
         const { token } = req.cookies;
         if(!token) {
-          following_status = "not_loggedin"
+          following_status = "not_there"
         }else{
           const decodedData = jwt.verify(token, process.env.JWT_SECRET);
           const user = await User.findById(decodedData.id);
-          if(!user){
-            following_status = "not_loggedin"
-          }else if(user.followed_funds?.includes(req.params.id)){
+          if(!user)
+          {
+            following_status = user
+          }
+          else if(user.followed_funds?.includes(req.params.id))
+          {
             following_status = "following"
-          }else{
+          }
+          else
+          {
             following_status = "not_following"
           }
         }
