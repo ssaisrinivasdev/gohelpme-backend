@@ -17,10 +17,20 @@ exports.successPayment = catchAsync(async (req, res, next) => {
   console.log(session);
   const user = await User.findById(req.user._id);
 
-  if(!(req.user._id == session.metadata.donater_id)||(!user)){
-    return res.status(404).json({
+  const donation_temp = await Donation.find({'session_id': req.body.id})
+  
+  if(donation_temp[0]!=null){
+    return res.status(403).json({
+      error: "User Already Paid",
+      message: "Warning"
+    }); 
+  }
+  else if(!(req.user._id == session.metadata.donater_id)||(!user)){
+    return res.status(401).json({
       error: "Invalid user for payment",
-      message: "Error"
+      message: "Error",
+      output: req.user._id +" "+ session.metadata.donater_id,
+      user
     }); 
   }
   else
@@ -59,13 +69,23 @@ exports.successPayment = catchAsync(async (req, res, next) => {
     const per =  ( 100 * fund.currentValue ) / fund.goal 
     fund.percent = per >= 100 ? 100 : per;
     fund.totalDonationsCount += 1;
-    if(fund.donations==null || fund.first_donated==null){
+    if(fund.donations[0]==null || fund.first_donated==null){
+      console.log("Entered If")
       fund.first_donated.push(donationLog.id)
+      fund.highest_donated.push(donationLog.id)
+      fund.recent_donated.push(donationLog.id)
+      fund.highest_donated_amount = amount
     }
-    (fund.recent_donated == null) ? (fund.recent_donated.push(donationLog.id)) : (fund.recent_donated[0] = donationLog.id)
-    (fund.highest_donated == null) ? (fund.highest_donated.push(donationLog.id), fund.highest_donated_amount = amount) : (
-      (fund.highest_donated_amount >= amount) ? (fund.highest_donated[0] = donationLog.id, fund.highest_donated_amount = amount) : ""
-    )
+    else
+    {
+      console.log("Entered Else");
+      fund.recent_donated[0] = donationLog.id;
+      if(amount >= fund.highest_donated_amount){
+        console.log("Enter high amount")
+        fund.highest_donated[0] = donationLog.id;
+        fund.highest_donated_amount = amount;
+      }
+    }
     user.donations.push(donationLog.id);
     fund.donations.push(donationLog.id);
     user.created_funds.push(donationLog.fund_id);
@@ -94,6 +114,7 @@ exports.cancelPayment = catchAsync(async (req, res, next) => {
 exports.payment = catchAsync(async (req, res, next)=>{
   try
   {
+    console.log(req.user.id)
     
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
   
@@ -113,7 +134,7 @@ exports.payment = catchAsync(async (req, res, next)=>{
         }
       ],
       metadata: {
-      "donater_id": req.user._id,
+      "donater_id": req.user.id,
       "fund_id": req.body.fund_id,
       "donator_name": req.body.donator_name == "null"  ? (req.user.name + req.user.lastname) : req.body.donator_name,
       },
