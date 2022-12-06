@@ -115,7 +115,7 @@ exports.payment = catchAsync(async (req, res, next)=>{
   try
   {
     console.log(req.user.id)
-    if(req.user.id && req.body.fund_id){
+    if(req.user.id && req.body.id){
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
     
       const product = await stripe.products.create({name: req.body.title});
@@ -135,7 +135,7 @@ exports.payment = catchAsync(async (req, res, next)=>{
         ],
         metadata: {
         "donater_id": req.user.id,
-        "fund_id": req.body.fund_id,
+        "fund_id": req.body.id,
         "donator_name": req.body.donator_name == "null"  ? (req.user.name + req.user.lastname) : req.body.donator_name,
         },
         submit_type: 'donate',
