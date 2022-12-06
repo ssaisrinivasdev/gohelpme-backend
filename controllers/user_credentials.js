@@ -241,7 +241,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
       });
     }
 
-    user.encry_password = await this.securePassword(req.body.password);
+    user.encry_password = await user.securePassword(req.body.password);
 
     await user.save();
     sendCookie(user, 200, res);
