@@ -326,7 +326,9 @@ exports.updateFund = catchAsync(async (req, res, next) => {
     else{
       return res.status(404).json({
         error: "Invalid fund owner",
-        message: "Error"
+        message: "Error",
+        "ownerFromRequest" : fundFromBody.owner,
+        "ownerFromBrowser": req.user._id
       }); 
     }
   }
