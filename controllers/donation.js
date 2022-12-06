@@ -115,41 +115,47 @@ exports.payment = catchAsync(async (req, res, next)=>{
   try
   {
     console.log(req.user.id)
+    if(req.user.id){
+      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
     
-    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-  
-    const product = await stripe.products.create({name: req.body.title});
-    
-    const price = await stripe.prices.create({
-      currency: 'usd',
-      custom_unit_amount: {enabled: true},
-      product: product.id,
-    });
-    
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: price.id,
-          quantity: 1
-        }
-      ],
-      metadata: {
-      "donater_id": req.user.id,
-      "fund_id": req.body.fund_id,
-      "donator_name": req.body.donator_name == "null"  ? (req.user.name + req.user.lastname) : req.body.donator_name,
-      },
-      submit_type: 'donate',
-      mode: 'payment',
-      cancel_url: "http://gohelpme.online/cancel/{CHECKOUT_SESSION_ID}",
-      success_url: "http://gohelpme.online/success/{CHECKOUT_SESSION_ID}",
+      const product = await stripe.products.create({name: req.body.title});
+      
+      const price = await stripe.prices.create({
+        currency: 'usd',
+        custom_unit_amount: {enabled: true},
+        product: product.id,
+      });
+      
+      const session = await stripe.checkout.sessions.create({
+        line_items: [
+          {
+            price: price.id,
+            quantity: 1
+          }
+        ],
+        metadata: {
+        "donater_id": req.user.id,
+        "fund_id": req.body.fund_id,
+        "donator_name": req.body.donator_name == "null"  ? (req.user.name + req.user.lastname) : req.body.donator_name,
+        },
+        submit_type: 'donate',
+        mode: 'payment',
+        cancel_url: "http://gohelpme.online/cancel/{CHECKOUT_SESSION_ID}",
+        success_url: "http://gohelpme.online/success/{CHECKOUT_SESSION_ID}",
 
-    });
-    console.log(session.url)
+      });
+      console.log(session.url)
 
-    return res.status(200).json({
-      message: "Success",
-      "redirect_link": session.url,
-    }); 
+      return res.status(200).json({
+        message: "Success",
+        "redirect_link": session.url,
+      }); 
+    }else{
+      return res.status(404).json({
+        error: "User not found",
+        message: "Error"
+      }); 
+    }
   }
   catch(err){
     return res.status(400).json({
