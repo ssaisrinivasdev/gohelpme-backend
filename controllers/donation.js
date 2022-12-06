@@ -115,7 +115,7 @@ exports.payment = catchAsync(async (req, res, next)=>{
   try
   {
     console.log(req.user.id)
-    if(req.user.id){
+    if(req.user.id && req.body.fund_id){
       const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
     
       const product = await stripe.products.create({name: req.body.title});
@@ -152,7 +152,7 @@ exports.payment = catchAsync(async (req, res, next)=>{
       }); 
     }else{
       return res.status(404).json({
-        error: "User not found",
+        error: "User or Fund not found",
         message: "Error"
       }); 
     }
