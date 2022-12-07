@@ -130,7 +130,7 @@ exports.getTrendingFunds= catchAsync(async (req, res, next) => {
     { 
       $facet : {
         donations : [
-          { $match: { "time": { $gt: new Date(Date.now() - 24*60*60 * 1000*7) } } },
+          { $match: { "createdAt": { $gt: new Date(Date.now() - 24*60*60 * 1000*14) } } },
           {
             $group:{
               _id:"$fund_id",
