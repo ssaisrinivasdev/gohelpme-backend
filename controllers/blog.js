@@ -89,7 +89,7 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
         return res.status(200).json({
           success: true,
           "current":page,
-          posts,
+          "posts": posts[0]?.actualData,
           "total": totalResultsFound,
         });
     }
