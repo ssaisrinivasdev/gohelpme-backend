@@ -62,4 +62,42 @@ exports.getPost = catchAsync(async (req, res, next) => {
       }); 
     }  
   });
+
+  //Search Funds
+exports.getAllPosts = catchAsync(async (req, res, next) => {
+    try{
+        var page = (req.query.page == null ? 0 : req.query.page) <= 0 ? 1 : req.query.page;
+    
+        var rangeStart = ((page - 1) * 6)+1;
+        // if(req.query.category){
+        const posts = await BlogPost.aggregate([
+            { 
+                $facet : {
+                    metaInfo : [
+                        { $group : { _id : null, count : {$sum : 1} } }
+                    ],
+                    actualData : [
+                        { $skip  : rangeStart-1 },
+                        { $limit : 6 },
+                        { $sort: {_id: -1}}
+                    ]
+                }
+            }
+        ]);
+        const totalResultsFound = posts[0]?.metaInfo[0]?.count == null ? 0 : posts[0]?.metaInfo[0]?.count;
+        
+        return res.status(200).json({
+          success: true,
+          "current":page,
+          posts,
+          "total": totalResultsFound,
+        });
+    }
+    catch(err){
+      return res.status(400).json({
+        error: "Something went wrong",
+        message: err.toString(),
+      }); 
+    }
+  });
   
