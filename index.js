@@ -36,12 +36,14 @@ const userRoutes = require('./routes/user');
 const fundRoutes = require('./routes/fund');
 const donationRouters = require('./routes/donation');
 const dashboardRouters = require('./routes/dashboard');
+const blogPost = require('./routes/blog')
 
 // Using routes
 app.use('/api', userRoutes);
 app.use('/api', fundRoutes);
 app.use('/api', donationRouters);
 app.use('/api', dashboardRouters);
+app.use('/api', blogPost);
 
 app.listen(process.env['PORT'], () => {
 	console.log('Server started on '+process.env['PORT'])
