@@ -2,6 +2,7 @@
 
 # dependencies
 .env
+launch.json
 /.pnp
 .pnp.js
 

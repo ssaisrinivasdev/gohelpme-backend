@@ -38,6 +38,11 @@ const Fund = new mongoose.Schema({
 			enum: ["InProgress", "Approved","Rejected"],
 			default: "InProgress",
 		},
+		withdrawl_request_status:{
+			type: String,
+			enum: ["NotRequested", "Requested", "Approved", "Rejected"],
+			default: "NotRequested",
+		},
 		rejection_reson: 		String,
 		fund_type: {
 			type: String,

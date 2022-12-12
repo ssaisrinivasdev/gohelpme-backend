@@ -48,6 +48,11 @@ const User = new mongoose.Schema({
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'donation',
 		}],
+		payment_request:{
+			type: String,
+			enum: ["NotRequested", "Requested","Approved", "Rejected"],
+			default: "NotRequested",
+		},
 		verification_code:		Number,
 		verification_status: 	Boolean,
 		verification_expiry:	Date,
