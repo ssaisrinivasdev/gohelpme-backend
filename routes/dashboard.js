@@ -1,5 +1,6 @@
 const express = require("express")
-const { fundsVerificationDetails, usersPaymentVerificationDetails, withdrawlVerificationDetails} = require("../controllers/dashboard")
+const { fundsVerificationDetails, usersPaymentVerificationDetails, withdrawlVerificationDetails
+,fundApprovalsListDetails} = require("../controllers/dashboard")
 const { query } = require("../controllers/queries")
 const {check} = require('express-validator')
 const router = express.Router()
@@ -11,6 +12,8 @@ router.get('/admin/funds-status/:category',fundsVerificationDetails);
 router.get('/admin/user-status',usersPaymentVerificationDetails);
 
 router.get('/admin/withdrawl-status',withdrawlVerificationDetails);
+
+router.get('/admin/fund-approvals-list',fundApprovalsListDetails);
 
 
 //Queries
