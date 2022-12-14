@@ -249,9 +249,7 @@ exports.withdrawlVerificationDetails = catchAsync(async (req, res, next) => {
 
 exports.fundApprovalsListDetails = catchAsync(async (req, res, next) => {
 
-    const funds =  category == "All" ? 
-                    (   
-                        await Fund.aggregate(
+    const funds =   await Fund.aggregate(
                             [
                                 {
                                     $facet : {
@@ -295,47 +293,12 @@ exports.fundApprovalsListDetails = catchAsync(async (req, res, next) => {
                                 }
                             ]
                         )    
-                    )
-                    :
-                    (
-                        await Fund.aggregate(
-                            [
-                                {
-                                    $facet : {
-                                        InProgress : [
-                                            { $match : {
-                                                $and:[
-                                                    {"category" : category },
-                                                    {"verification_status" : "InProgress" }
-                                                ]
-                                                } 
-                                            },
-                                            { $group : { _id : null, count : {$sum : 1} } },
-                                        ],
-                                        Approved : [
-                                            { $match : {
-                                                $and:[
-                                                    {"category" : category },
-                                                    {"verification_status" : "Approved" }
-                                                ]
-                                                } 
-                                            },
-                                            { $group : { _id : null, count : {$sum : 1} } },
-                                        ],
-                                        Rejected : [
-                                            { $match : {
-                                                $and:[
-                                                    {"category" : category },
-                                                    {"verification_status" : "Rejected" }
-                                                ]
-                                                } 
-                                            },
-                                            { $group : { _id : null, count : {$sum : 1} } },
-                                        ]
-                                    }
-                                }
-                            ]
-                        )
-                    )
+                    
+
+        return res.status(200).json({
+            message: "Success",
+            funds
+        });
+                    
 
 })
