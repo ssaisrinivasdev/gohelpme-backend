@@ -302,17 +302,20 @@ exports.fundApprovalsListDetails = catchAsync(async (req, res, next) => {
         fromDate.setDate(fromDate.getDate());
     }
 
-    let ver_status = req.params.body == null ? "InProgress" : req.params.body;
+    let ver_status = req.body.status == null ? "InProgress" : req.body.status;
+    const category = req.body.category == null? "All": req.body.category;
+    console.log(ver_status+" "+category)
 
-    const funds =   await Fund.aggregate(
+
+    const funds = ( category == "All") ? (await Fund.aggregate(
                             [
                                 {
                                     $facet : {
-                                        InProgress : [
+                                        Result : [
                                             { $match : {
                                                 $and:[
-                                                    { "createdAt"        : { $gte: fromDate, $lte: toDate }},
-                                                    {"verification_status" : ver_status }
+                                                    { "createdAt"          : { $gte: fromDate, $lte: toDate }},
+                                                    {"verification_status" : ver_status },
                                                 ]
                                                 }
                                             },
@@ -330,7 +333,39 @@ exports.fundApprovalsListDetails = catchAsync(async (req, res, next) => {
                                     }
                                 }
                             ]
-                        )    
+                        )  
+                    ):
+                    (
+                        await Fund.aggregate(
+                            [
+                                {
+                                    $facet : {
+                                        Result : [
+                                            { $match : {
+                                                $and:[
+                                                    { "createdAt"          : { $gte: fromDate, $lte: toDate }},
+                                                    {"verification_status" : ver_status },
+                                                    {"category"            : category},
+                                                ]
+                                                }
+                                            },
+                                                {$project:{
+                                                    "_id":1,
+                                                    "title":1,
+                                                    "createdAt":1,
+                                                    "goal":1,
+                                                    "category":1,
+                                                    "fund_type":1,
+                                                    "verification_status":1,
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        )  
+                    )
+                          
                     
 
         return res.status(200).json({
