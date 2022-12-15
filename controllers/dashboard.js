@@ -280,6 +280,29 @@ exports.withdrawlVerificationDetails = catchAsync(async (req, res, next) => {
 
 
 exports.fundApprovalsListDetails = catchAsync(async (req, res, next) => {
+    let toDate = new Date(req.body.toDate);
+    let fromDate = new Date(req.body.fromDate);
+
+    if(fromDate > toDate){
+        return res.status(422).json({
+            error: "Date range is not acceptable",
+            message: ""
+          }); 
+    }
+    else if(toDate == null && fromDate == null){
+        toDate = new Date();
+        fromDate = toDate.getDate()-1;
+        toDate.setDate(toDate.getDate());
+    }else if(toDate == null){
+        toDate = new Date();
+    }else if(fromDate == null){
+        fromDate = toDate.getDate()-1;
+    }else{
+        toDate.setDate(toDate.getDate());
+        fromDate.setDate(fromDate.getDate());
+    }
+
+    let ver_status = req.params.body == null ? "InProgress" : req.params.body;
 
     const funds =   await Fund.aggregate(
                             [
@@ -288,7 +311,8 @@ exports.fundApprovalsListDetails = catchAsync(async (req, res, next) => {
                                         InProgress : [
                                             { $match : {
                                                 $and:[
-                                                    {"verification_status" : "InProgress" }
+                                                    { "createdAt"        : { $gte: fromDate, $lte: toDate }},
+                                                    {"verification_status" : ver_status }
                                                 ]
                                                 }
                                             },
@@ -302,24 +326,6 @@ exports.fundApprovalsListDetails = catchAsync(async (req, res, next) => {
                                                     "verification_status":1,
                                                 }
                                             }
-                                        ],
-                                        Approved : [
-                                            { $match : {
-                                                $and:[
-                                                    {"verification_status" : "Approved" }
-                                                ]
-                                                } 
-                                            },
-                                            { $group : { _id : null, count : {$sum : 1} } },
-                                        ],
-                                        Rejected : [
-                                            { $match : {
-                                                $and:[
-                                                    {"verification_status" : "Rejected" }
-                                                ]
-                                                } 
-                                            },
-                                            { $group : { _id : null, count : {$sum : 1} } },
                                         ]
                                     }
                                 }
