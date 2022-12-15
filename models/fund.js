@@ -70,6 +70,10 @@ const Fund = new mongoose.Schema({
 			type: Schema.Types.ObjectId,
 			ref: 'donation',
 		}],
+		withdrawls:[{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'withdrawl',
+		}],
 		highest_donated_amount: Number,
 		currency:				String,
 		goal:                   Number,

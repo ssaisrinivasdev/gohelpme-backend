@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const Fund = require("../models/fund");
 const Donation = require("../models/donation");
+const Withdrawl = require("../models/withdrawl");
 const catchAsync = require("../middleware/catchAsync")
 const categoryArray = ["Medical","Memorial","Emergency","NonProfit","FinancialEmergency","Animals","Environment",
 "Business","Community","Competition","Creative","Event","Faith","Family","Sports","Travel",
@@ -102,6 +103,61 @@ exports.fundsVerificationDetails = catchAsync(async (req, res, next) => {
         
 
         
+       
+
+       
+
+        return res.status(200).json({
+                    message: "Success",
+                    "category": category,
+                    funds,
+                    // withdrawlRequests
+                });
+    }
+    else{
+        return res.status(404).json({
+            error: "Category not entered",
+            message: "Error",
+        });
+    }
+    
+})
+
+exports.getFinanceWithDrawls= catchAsync(async (req, res, next) => {
+    try{
+        const withdrawlRequests = await Withdrawl.aggregate(
+            [
+                {
+                    $facet : {
+                        InProgress : [
+                            { $match : {
+                                $and:[
+                                    { "createdAt": { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000 * 14) } } ,
+                                    { "withdrawl_status" : "Requested" }
+                                ]
+                                } 
+                            },
+                            { $group : { _id : null, count : {$sum : 1}, amount: {$sum: "$withdrawl_amount"} } },
+                        ]
+                    }
+                }
+            ]
+        );
+        return res.status(200).json({
+            message: "Success",
+            withdrawlRequests
+        });
+    }
+    catch(e){
+        return res.status(400).json({
+            error: "Error",
+            message: e.toString(),
+        });
+    }    
+});
+
+exports.getFinanceDonations= catchAsync(async (req, res, next) => {
+    try{
         const donationsReceived = await Donation.aggregate(
             [
                 {
@@ -119,42 +175,18 @@ exports.fundsVerificationDetails = catchAsync(async (req, res, next) => {
                 }
             ]
         );
-
-        // const withdrawlRequests = await Fund.aggregate(
-        //     [
-        //         {
-        //             $facet : {
-        //                 InProgress : [
-        //                     { $match : {
-        //                         $and:[
-        //                             { "createdAt": { $gt: new Date(Date.now() - 24 * 60 * 60 * 1000 * 14) } } ,
-        //                             { "withdrawl_request_status" : "Requested" }
-        //                         ]
-        //                         } 
-        //                     },
-        //                     { $group : { _id : null, count : {$sum : 1}, amount: {$sum: "$amount"} } },
-        //                 ]
-        //             }
-        //         }
-        //     ]
-        // );
-
         return res.status(200).json({
-                    message: "Success",
-                    "category": category,
-                    funds,
-                    donationsReceived,
-                    // withdrawlRequests
-                });
-    }
-    else{
-        return res.status(404).json({
-            error: "Category not entered",
-            message: "Error",
+            message: "Success",
+            donationsReceived
         });
     }
-    
-})
+    catch(e){
+        return res.status(400).json({
+            error: "Error",
+            message: e.toString(),
+        });
+    }    
+});
 
 
 exports.usersPaymentVerificationDetails = catchAsync(async (req, res, next) => {
@@ -203,14 +235,14 @@ exports.usersPaymentVerificationDetails = catchAsync(async (req, res, next) => {
 
 exports.withdrawlVerificationDetails = catchAsync(async (req, res, next) => {
 
-    const withdrawlRequests = await Fund.aggregate(
+    const withdrawlRequests = await Withdrawl.aggregate(
         [
             {
                 $facet : {
                     InProgress : [
                         { $match : {
                             $and:[
-                                {"withdrawl_request_status" : "Requested" }
+                                {"withdrawl_status" : "Requested" }
                             ]
                             } 
                         },
@@ -219,7 +251,7 @@ exports.withdrawlVerificationDetails = catchAsync(async (req, res, next) => {
                     Approved : [
                         { $match : {
                             $and:[
-                                {"withdrawl_request_status" : "Approved" }
+                                {"withdrawl_status" : "Approved" }
                             ]
                             } 
                         },
@@ -228,7 +260,7 @@ exports.withdrawlVerificationDetails = catchAsync(async (req, res, next) => {
                     Rejected : [
                         { $match : {
                             $and:[
-                                {"withdrawl_request_status" : "Rejected" }
+                                {"withdrawl_status" : "Rejected" }
                             ]
                             } 
                         },
@@ -301,4 +333,110 @@ exports.fundApprovalsListDetails = catchAsync(async (req, res, next) => {
         });
                     
 
+})
+
+//Add Get All Withdrawl Request for table in Dashboard
+exports.getWithdrawlRequestsList = catchAsync(async (req, res, next) => {
+
+    let toDate = new Date(req.body.toDate);
+    let fromDate = new Date(req.body.fromDate);
+
+    if(fromDate > toDate){
+        return res.status(422).json({
+            error: "Date range is not acceptable",
+            message: ""
+          }); 
+    }
+    else if(toDate == null && fromDate == null){
+        toDate = new Date();
+        fromDate = toDate.getDate()-1;
+        toDate.setDate(toDate.getDate());
+    }else if(toDate == null){
+        toDate = new Date();
+    }else if(fromDate == null){
+        fromDate = toDate.getDate()-1;
+    }else{
+        toDate.setDate(toDate.getDate());
+        fromDate.setDate(fromDate.getDate());
+    }
+
+    const wdReq =  await Withdrawl.aggregate(
+        [
+            {
+                $facet : {
+                    Result : [
+                        { $match : {
+                            $and:[
+                                { "createdAt"        : { $gte: fromDate, $lte: toDate }},
+                                { "withdrawl_status" : req.body.status }
+                            ]
+                            }
+                        },
+                            {$project:{
+                                "_id":1,
+                                "fund":1,
+                                "createdAt":1,
+                                "owner":1,
+                                "withdrawl_status":1,
+                                "withdrawl_amount":1,
+                                "rejected_reason":1,
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    )
+    
+
+    // const funds =   await Withdrawl.aggregate(
+    //                         [
+    //                             {
+    //                                 $facet : {
+    //                                     InProgress : [
+    //                                         { $match : {
+    //                                             $and:[
+    //                                                 {"verification_status" : "InProgress" }
+    //                                             ]
+    //                                             }
+    //                                         },
+    //                                             {$project:{
+    //                                                 "_id":1,
+    //                                                 "title":1,
+    //                                                 "createdAt":1,
+    //                                                 "goal":1,
+    //                                                 "category":1,
+    //                                                 "fund_type":1,
+    //                                                 "verification_status":1,
+    //                                             }
+    //                                         }
+    //                                     ],
+    //                                     Approved : [
+    //                                         { $match : {
+    //                                             $and:[
+    //                                                 {"verification_status" : "Approved" }
+    //                                             ]
+    //                                             } 
+    //                                         },
+    //                                         { $group : { _id : null, count : {$sum : 1} } },
+    //                                     ],
+    //                                     Rejected : [
+    //                                         { $match : {
+    //                                             $and:[
+    //                                                 {"verification_status" : "Rejected" }
+    //                                             ]
+    //                                             } 
+    //                                         },
+    //                                         { $group : { _id : null, count : {$sum : 1} } },
+    //                                     ]
+    //                                 }
+    //                             }
+    //                         ]
+    //                     )    
+                    
+
+        return res.status(200).json({
+            message: "Success",
+            wdReq
+        });
 })
