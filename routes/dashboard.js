@@ -13,13 +13,13 @@ router.get('/admin/user-status',usersPaymentVerificationDetails);
 
 router.get('/admin/withdrawl-status',withdrawlVerificationDetails);
 
-router.get('/admin/fund-approvals-list',fundApprovalsListDetails);
-
 router.get('/admin/finance/withdrawls',getFinanceWithDrawls);
 
 router.get('/admin/finance/donations',getFinanceDonations);
 
-router.get('/admin/withdrawl-approvals-list',getWithdrawlRequestsList);
+router.post('/admin/fund-approvals-list',fundApprovalsListDetails);
+
+router.post('/admin/withdrawl-approvals-list',getWithdrawlRequestsList);
 
 
 //Queries
