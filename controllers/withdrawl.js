@@ -63,6 +63,7 @@ exports.updateRequest = catchAsync(async (req, res, next) => {
         const withdrawl_details = {
             "payment_status": wdReq.payment_status,
             "withdrawl_amount": wdReq.withdrawl_amount,
+            "withdrawl_status": wdReq.withdrawl_status,
             "rejected_reason": wdReq.rejected_reason,
             "payment_type": wdReq.payment_type,
             "createdAt": wdReq.createdAt,

@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Fund = require("../models/fund");
 const Donation = require("../models/donation");
 const Withdrawl = require("../models/withdrawl");
+const Blog = require("../models/blog");
 const catchAsync = require("../middleware/catchAsync")
 const categoryArray = ["Medical","Memorial","Emergency","NonProfit","FinancialEmergency","Animals","Environment",
 "Business","Community","Competition","Creative","Event","Faith","Family","Sports","Travel",
@@ -427,57 +428,165 @@ exports.getWithdrawlRequestsList = catchAsync(async (req, res, next) => {
                 }
             }
         ]
-    )
-    
-
-    // const funds =   await Withdrawl.aggregate(
-    //                         [
-    //                             {
-    //                                 $facet : {
-    //                                     InProgress : [
-    //                                         { $match : {
-    //                                             $and:[
-    //                                                 {"verification_status" : "InProgress" }
-    //                                             ]
-    //                                             }
-    //                                         },
-    //                                             {$project:{
-    //                                                 "_id":1,
-    //                                                 "title":1,
-    //                                                 "createdAt":1,
-    //                                                 "goal":1,
-    //                                                 "category":1,
-    //                                                 "fund_type":1,
-    //                                                 "verification_status":1,
-    //                                             }
-    //                                         }
-    //                                     ],
-    //                                     Approved : [
-    //                                         { $match : {
-    //                                             $and:[
-    //                                                 {"verification_status" : "Approved" }
-    //                                             ]
-    //                                             } 
-    //                                         },
-    //                                         { $group : { _id : null, count : {$sum : 1} } },
-    //                                     ],
-    //                                     Rejected : [
-    //                                         { $match : {
-    //                                             $and:[
-    //                                                 {"verification_status" : "Rejected" }
-    //                                             ]
-    //                                             } 
-    //                                         },
-    //                                         { $group : { _id : null, count : {$sum : 1} } },
-    //                                     ]
-    //                                 }
-    //                             }
-    //                         ]
-    //                     )    
-                    
+    )   
 
         return res.status(200).json({
             message: "Success",
             wdReq
         });
+});
+
+
+//Add Get All Withdrawl Request for table in Dashboard
+exports.getBlogsList = catchAsync(async (req, res, next) => {
+
+    let toDate = new Date(req.body.toDate);
+    let fromDate = new Date(req.body.fromDate);
+    let status = null
+    if(req.body.status){
+        status = req.body.status
+    }
+    let keyword = null;
+    if(req.query.keyword){
+        keyword = new RegExp(req.query.keyword,"i");
+    }
+    console.log(keyword+" "+status)
+
+    if(fromDate > toDate){
+        return res.status(422).json({
+            error: "Date range is not acceptable",
+            message: ""
+          }); 
+    }
+    else if(toDate == null && fromDate == null){
+        toDate = new Date();
+        fromDate = toDate.getDate()-1;
+        toDate.setDate(toDate.getDate());
+    }else if(toDate == null){
+        toDate = new Date();
+    }else if(fromDate == null){
+        fromDate = toDate.getDate()-1;
+    }else{
+        toDate.setDate(toDate.getDate());
+        fromDate.setDate(fromDate.getDate());
+    }
+
+    const blogs = (keyword==null) ? (
+        (status == null)?(
+        await Blog.aggregate(
+            [
+                {
+                    $facet : {
+                        Result : [
+                            { $match : {
+                                $and:[
+                                    { "createdAt"        : { $gte: fromDate, $lte: toDate }},
+                                ]
+                                }
+                            },
+                            {$project:{
+                                    "_id":1,
+                                    "title":1,
+                                    "createdAt":1,
+                                    "long_description":1,
+                                    "images":1,
+                                    "status":1,
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        ) 
+        ):(
+            await Blog.aggregate(
+                [
+                    {
+                        $facet : {
+                            Result : [
+                                { $match : {
+                                    $and:[
+                                        { "createdAt"        : { $gte: fromDate, $lte: toDate }},
+                                        {"status": status}
+                                    ]
+                                    }
+                                },
+                                    {$project:{
+                                        "_id":1,
+                                        "title":1,
+                                        "createdAt":1,
+                                        "long_description":1,
+                                        "images":1,
+                                        "status":1,
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            )
+        )
+    ):(
+        (status == null)?(
+        await Blog.aggregate(
+            [
+                {
+                    $facet : {
+                        Result : [
+                            { $match : {
+                                $and:[
+                                    { "createdAt"        : { $gte: fromDate, $lte: toDate }},
+                                    {"title" : keyword },
+                                ]
+                                }
+                            },
+                                {$project:{
+                                    "_id":1,
+                                    "title":1,
+                                    "createdAt":1,
+                                    "long_description":1,
+                                    "images":1,
+                                    "status":1,
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        ) 
+        ):(
+            await Blog.aggregate(
+                [
+                    {
+                        $facet : {
+                            Result : [
+                                { $match : {
+                                    $and:[
+                                        { "createdAt"        : { $gte: fromDate, $lte: toDate }},
+                                        { "title" : keyword },
+                                        {"status": status}
+                                    ]
+                                    }
+                                },
+                                    {$project:{
+                                        "_id":1,
+                                        "title":1,
+                                        "createdAt":1,
+                                        "long_description":1,
+                                        "images":1,
+                                        "status":1,
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            )
+        )
+    )
+
+    return res.status(200).json({
+        message: "Success",
+        blogs
+    });
 })

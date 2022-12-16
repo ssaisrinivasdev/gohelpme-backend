@@ -17,7 +17,12 @@ const blogPostSchema = new mongoose.Schema({
 			required: true,
 			trim: true,
 			unique: false
-		}
+		},
+		status:{
+			type: String,
+			enum: ["Draft","Published"],
+			default: "Draft",
+	},
 	},
     {timestamps: true},
 )
