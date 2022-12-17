@@ -634,6 +634,7 @@ exports.getQueriesList = catchAsync(async (req, res, next) => {
                                 "email":1,
                                 "message":1,
                                 "ticket_status":1,
+                                "createdAt":1,
                             }
                         }
                     ]
