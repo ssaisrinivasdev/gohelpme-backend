@@ -1,6 +1,7 @@
 const express = require("express")
 const { fundsVerificationDetails, usersPaymentVerificationDetails, withdrawlVerificationDetails
-,fundApprovalsListDetails, getWithdrawlRequestsList,getFinanceWithDrawls,getFinanceDonations,getBlogsList} = require("../controllers/dashboard")
+,fundApprovalsListDetails, getWithdrawlRequestsList,getFinanceWithDrawls,getFinanceDonations,getBlogsList,
+getQueriesList} = require("../controllers/dashboard")
 const { query } = require("../controllers/queries")
 const {check} = require('express-validator')
 const router = express.Router()
@@ -23,8 +24,7 @@ router.post('/admin/withdrawl-approvals-list',getWithdrawlRequestsList);
 
 router.post('/admin/blogs',getBlogsList);
 
-//Queries
-router.post('/query',query);
+router.post('/admin/queries-list',getQueriesList);
 
 
 

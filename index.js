@@ -38,6 +38,7 @@ const donationRouters = require('./routes/donation');
 const dashboardRouters = require('./routes/dashboard');
 const blogPost = require('./routes/blog')
 const withdrawl = require('./routes/withdrawl')
+const query = require('./routes/query')
 
 // Using routes
 app.use('/api', userRoutes);
@@ -46,6 +47,7 @@ app.use('/api', donationRouters);
 app.use('/api', dashboardRouters);
 app.use('/api', blogPost);
 app.use('/api/withdrawl', withdrawl);
+app.use('/api/query', query);
 
 app.listen(process.env['PORT'], () => {
 	console.log('Server started on '+process.env['PORT'])

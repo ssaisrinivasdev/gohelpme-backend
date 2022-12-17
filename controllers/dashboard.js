@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Fund = require("../models/fund");
 const Donation = require("../models/donation");
 const Withdrawl = require("../models/withdrawl");
+const Query = require("../models/queries");
 const Blog = require("../models/blog");
 const catchAsync = require("../middleware/catchAsync")
 const categoryArray = ["Medical","Memorial","Emergency","NonProfit","FinancialEmergency","Animals","Environment",
@@ -589,3 +590,60 @@ exports.getBlogsList = catchAsync(async (req, res, next) => {
         blogs
     });
 })
+
+
+exports.getQueriesList = catchAsync(async (req, res, next) => {
+
+    let toDate = new Date(req.body.toDate);
+    let fromDate = new Date(req.body.fromDate);
+
+    if(fromDate > toDate){
+        return res.status(422).json({
+            error: "Date range is not acceptable",
+            message: ""
+          }); 
+    }
+    else if(toDate == null && fromDate == null){
+        toDate = new Date();
+        fromDate = toDate.getDate()-1;
+        toDate.setDate(toDate.getDate());
+    }else if(toDate == null){
+        toDate = new Date();
+    }else if(fromDate == null){
+        fromDate = toDate.getDate()-1;
+    }else{
+        toDate.setDate(toDate.getDate());
+        fromDate.setDate(fromDate.getDate());
+    }
+
+    const queryReq =  await Query.aggregate(
+        [
+            {
+                $facet : {
+                    Result : [
+                        { $match : {
+                            $and:[
+                                { "createdAt"        : { $gte: fromDate, $lte: toDate }},
+                                { "ticket_status" : req.body.ticket_status }
+                            ]
+                            }
+                        },
+                            {$project:{
+                                "_id":1,
+                                "full_name":1,
+                                "email":1,
+                                "message":1,
+                                "ticket_status":1,
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    )   
+
+    return res.status(200).json({
+        message: "Success",
+        queryReq
+    });
+});
