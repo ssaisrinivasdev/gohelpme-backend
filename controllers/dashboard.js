@@ -447,8 +447,8 @@ exports.getBlogsList = catchAsync(async (req, res, next) => {
         status = req.body.status
     }
     let keyword = null;
-    if(req.query.keyword){
-        keyword = new RegExp(req.query.keyword,"i");
+    if(req.body.keyword){
+        keyword = new RegExp(req.body.keyword,"i");
     }
 
     if(fromDate > toDate){
