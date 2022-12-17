@@ -450,7 +450,6 @@ exports.getBlogsList = catchAsync(async (req, res, next) => {
     if(req.query.keyword){
         keyword = new RegExp(req.query.keyword,"i");
     }
-    console.log(keyword+" "+status)
 
     if(fromDate > toDate){
         return res.status(422).json({
@@ -472,7 +471,7 @@ exports.getBlogsList = catchAsync(async (req, res, next) => {
     }
 
     const blogs = (keyword==null) ? (
-        (status == null)?(
+        (status == null || status == "All")?(
         await Blog.aggregate(
             [
                 {
@@ -527,7 +526,7 @@ exports.getBlogsList = catchAsync(async (req, res, next) => {
             )
         )
     ):(
-        (status == null)?(
+        (status == null || status == "All")?(
         await Blog.aggregate(
             [
                 {
