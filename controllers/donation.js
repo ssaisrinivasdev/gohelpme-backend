@@ -70,7 +70,6 @@ exports.successPayment = catchAsync(async (req, res, next) => {
     fund.percent = per >= 100 ? 100 : per;
     fund.totalDonationsCount += 1;
     if(fund.donations[0]==null || fund.first_donated==null){
-      console.log("Entered If")
       fund.first_donated.push(donationLog.id)
       fund.highest_donated.push(donationLog.id)
       fund.recent_donated.push(donationLog.id)
@@ -78,10 +77,8 @@ exports.successPayment = catchAsync(async (req, res, next) => {
     }
     else
     {
-      console.log("Entered Else");
       fund.recent_donated[0] = donationLog.id;
       if(amount >= fund.highest_donated_amount){
-        console.log("Enter high amount")
         fund.highest_donated[0] = donationLog.id;
         fund.highest_donated_amount = amount;
       }
@@ -100,7 +97,6 @@ exports.successPayment = catchAsync(async (req, res, next) => {
 
 exports.cancelPayment = catchAsync(async (req, res, next) => {
 
-
   const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
   const session = await stripe.checkout.sessions.retrieve(
@@ -112,6 +108,7 @@ exports.cancelPayment = catchAsync(async (req, res, next) => {
 
 
 exports.payment = catchAsync(async (req, res, next)=>{
+  
   try
   {
     console.log(req.user.id)

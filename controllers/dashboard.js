@@ -4,6 +4,7 @@ const Donation = require("../models/donation");
 const Withdrawl = require("../models/withdrawl");
 const Query = require("../models/queries");
 const Blog = require("../models/blog");
+const Admin = require("../models/admin");
 const catchAsync = require("../middleware/catchAsync")
 const categoryArray = ["Medical","Memorial","Emergency","NonProfit","FinancialEmergency","Animals","Environment",
 "Business","Community","Competition","Creative","Event","Faith","Family","Sports","Travel",
@@ -646,5 +647,34 @@ exports.getQueriesList = catchAsync(async (req, res, next) => {
     return res.status(200).json({
         message: "Success",
         queryReq
+    });
+});
+
+exports.getRolesList = catchAsync(async (req, res, next) => {
+
+    const rolesList =  await Admin.aggregate(
+        [
+            {
+                $facet : {
+                    Result : [
+                            {$project:{
+                                "_id":1,
+                                "email":1,
+                                "roles":1,
+                                "admin_type":1,
+                                "createdBy":1,
+                                "updatedBy":1,
+                                "createdAt":1,
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    )   
+
+    return res.status(200).json({
+        message: "Success",
+        rolesList
     });
 });

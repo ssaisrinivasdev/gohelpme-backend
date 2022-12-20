@@ -3,9 +3,6 @@ const catchAsync = require('../middleware/catchAsync');
 const sendCookie = require('../utils/sendCookie');
 const sendEmail = require('../utils/sendEmail');
 
-
-
-
 //Register - Business logic:
 exports.register = catchAsync(async (req, res, next) => {
   try

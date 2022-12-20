@@ -39,6 +39,7 @@ const dashboardRouters = require('./routes/dashboard');
 const blogPost = require('./routes/blog')
 const withdrawl = require('./routes/withdrawl')
 const query = require('./routes/query')
+const admin = require('./routes/admin')
 
 // Using routes
 app.use('/api', userRoutes);
@@ -48,6 +49,7 @@ app.use('/api', dashboardRouters);
 app.use('/api', blogPost);
 app.use('/api/withdrawl', withdrawl);
 app.use('/api/query', query);
+app.use('/api/admin', admin);
 
 app.listen(process.env['PORT'], () => {
 	console.log('Server started on '+process.env['PORT'])

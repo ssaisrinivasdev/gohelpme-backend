@@ -1,11 +1,12 @@
 const express = require("express")
 const { fundsVerificationDetails, usersPaymentVerificationDetails, withdrawlVerificationDetails
 ,fundApprovalsListDetails, getWithdrawlRequestsList,getFinanceWithDrawls,getFinanceDonations,getBlogsList,
-getQueriesList} = require("../controllers/dashboard")
+getQueriesList, getRolesList} = require("../controllers/dashboard")
 const { query } = require("../controllers/queries")
 const {check} = require('express-validator')
 const router = express.Router()
 const { isAuthenticated } = require('../middleware/auth');
+const { isAdminAuthenticated } = require('../middleware/authAdmin');
 
 
 router.get('/admin/funds-status/:category',fundsVerificationDetails);
@@ -26,6 +27,7 @@ router.post('/admin/blogs',getBlogsList);
 
 router.post('/admin/queries-list',getQueriesList);
 
+router.get('/admin/roles-list',getRolesList);
 
 
 module.exports = router
