@@ -22,9 +22,9 @@ const sendCookie = (admin = {}, statusCode, res) => {
         "roles": admin.roles,
     }
 
-    res.status(statusCode).cookie('admin-token', token, options).json({
+    res.status(statusCode).cookie('admin_token', token, options).json({
         message: "Success",
-        "admin-token": token,
+        "admin_token": token,
         response,
     });
 }

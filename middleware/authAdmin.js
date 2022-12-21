@@ -6,16 +6,16 @@ const catchAsync = require("./catchAsync");
 exports.isAdminAuthenticated = catchAsync(async (req, res, next) => {
     
     try{
-        const { token } = req.cookies;
+        const { admin_token } = req.cookies;
 
-        if(!token) {
+        if(!admin_token) {
             return res.status(401).json({
                 error: "Please Login to Access",
                 Message: "Error"
             });
         }
 
-        const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+        const decodedData = jwt.verify(admin_token, process.env.JWT_SECRET);
         req.admin = await Admin.findById(decodedData.id);
 
         next();
