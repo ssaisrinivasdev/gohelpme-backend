@@ -51,6 +51,11 @@ app.use('/api/withdrawl', withdrawl);
 app.use('/api/query', query);
 app.use('/api/admin', admin);
 
+app.get('/',(req,res)=>{
+    console.log("Working");
+    res.send("working");
+})
+
 app.listen(process.env['PORT'], () => {
 	console.log('Server started on '+process.env['PORT'])
 })
