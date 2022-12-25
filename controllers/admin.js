@@ -192,3 +192,53 @@ exports.updateSubAdmin = catchAsync(async (req, res, next) => {
     }
 });
 
+exports.getAdminDetails = catchAsync(async (req, res, next) => {
+    try
+    {
+        const currentAdmin = req.admin
+        const adminFound = await Admin.findById(req.params.id)
+        let admin = null
+
+        if (!adminFound) {
+          return res.status(401).json({
+              error: "Invalid Email",
+              message: "Error"
+          });
+        }
+        else
+        {
+            let passThrough = false;
+            if(currentAdmin.admin_type == "co-admin" || currentAdmin.admin_type =="admin"){
+                passThrough = true;
+            }else if(currentAdmin.id == adminFound._id){
+                passThrough = true;
+            }else{
+                passThrough = false;
+            }
+
+            if(passThrough){
+                const response = {
+                    "email": adminFound.email,
+                    "roles": adminFound.roles,
+                    "id": adminFound.id,
+                    "admin_type":adminFound.admin_type,
+                    
+                }
+                return res.status(200).json({
+                    message: "Success", 
+                    response
+                });
+            }else{
+                return res.status(401).json({
+                    error: "You don't have enough permissions.",
+                    message: "Error"
+                });
+            }
+        }
+    }catch(err){
+        return res.status(400).json({
+        error: "Something went wrong",
+        message: err.toString(),
+        }); 
+    }
+});

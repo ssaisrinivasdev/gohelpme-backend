@@ -20,6 +20,8 @@ const sendCookie = (admin = {}, statusCode, res) => {
     const response = {
         "email": admin.email,
         "roles": admin.roles,
+        "id": admin._id,
+        "admin_type":admin.admin_type
     }
 
     res.status(statusCode).cookie('admin_token', token, options).json({
