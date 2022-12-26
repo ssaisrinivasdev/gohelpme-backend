@@ -59,15 +59,10 @@ exports.getUser = catchAsync(async (req, res, next) => {
 exports.updateUser = catchAsync(async (req, res, next) => {
 
     try{
-        const { name, lastname, email } = req.body;
+        const newUserData = req.body;
 
-        const newUserData = {
-            name,
-            lastname,
-            email,
-        }
     
-        if(email != req.user.email.toString()){
+        if(newUserData.email.toString() != req.user.email.toString()){
             res.status(401).json({
               error: "Invalid email",
               message: "Error"
@@ -75,14 +70,21 @@ exports.updateUser = catchAsync(async (req, res, next) => {
         }
         else{
     
-            await User.findByIdAndUpdate(req.user._id, newUserData, {
+            const userf = await User.findByIdAndUpdate(req.user._id, newUserData, {
                 new: true,
                 runValidators: true,
                 useFindAndModify: true,
             });
+
+            const response = {
+                "email": userf.email,
+                "payment_request": userf.payment_request,
+                "paypal_address": userf.paypal_address,
+            }
     
             res.status(200).json({
                 "message": "Success",
+                "user": response,
             });
             
         }    
