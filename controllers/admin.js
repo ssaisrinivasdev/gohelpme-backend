@@ -72,7 +72,7 @@ exports.registerAdmin = catchAsync(async (req, res, next) => {
                 });
             }
         }else{
-            return res.status(403).json({
+            return res.status(400).json({
                 error: "You don't have permissions to make this request",
                 message: "Error",
             });
@@ -222,7 +222,7 @@ exports.getAdminDetails = catchAsync(async (req, res, next) => {
                     "roles": adminFound.roles,
                     "id": adminFound.id,
                     "admin_type":adminFound.admin_type,
-                    
+
                 }
                 return res.status(200).json({
                     message: "Success", 

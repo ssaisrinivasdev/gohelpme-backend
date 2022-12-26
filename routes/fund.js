@@ -1,10 +1,11 @@
 const express = require("express")
 const { getAllFunds, createFund, getFundDetails, searchFunds, fundsByCategory, addFundUpdates,
-    updateFund,getTrendingFunds} = require("../controllers/fund")
+    updateFund,getTrendingFunds, updateFundStatus} = require("../controllers/fund")
 const {check} = require('express-validator')
 const router = express.Router()
 const { isAuthenticated } = require('../middleware/auth');
 const {uploadFundDocuments, uploadFundImages} = require('../utils/awsFunctions');
+const { isAdminAuthenticated } = require('../middleware/authAdmin');
 
 router.get('/getallfunds',getAllFunds);
 router.get('/fund/:id',getFundDetails);
@@ -15,6 +16,7 @@ router.put('/addfundUpdates/:id',isAuthenticated, addFundUpdates)
 router.get('/funds/search',searchFunds);
 
 router.put('/updatefund/:id',isAuthenticated,updateFund);
+router.put('/update-fund-request',isAdminAuthenticated, updateFundStatus)
 router.get('/trendingfunds',getTrendingFunds) 
 
 

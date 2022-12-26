@@ -302,11 +302,6 @@ exports.fundsByCategory = catchAsync(async (req, res, next) => {
 });
 
 
-
-
-//Done
-
-
 //Done
 //Updating the post details
 exports.updateFund = catchAsync(async (req, res, next) => {
@@ -315,6 +310,38 @@ exports.updateFund = catchAsync(async (req, res, next) => {
     //TODO: check whether post is belongs to the user in the 
     var fundFromBody = req.body;
     if(fundFromBody.owner == req.user._id){
+      await Fund.findByIdAndUpdate(req.params.id, fundFromBody, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: true,
+      });
+      const fundFromId = await Fund.findById(req.params.id);
+      res.status(200).json({
+          message: "Success",
+          fundFromId
+      });
+    }
+    else{
+      return res.status(404).json({
+        error: "Invalid fund owner",
+        message: "Error",
+      }); 
+    }
+  }
+  catch(err){
+    return res.status(400).json({
+      error: "Something went wrong",
+      message: err.toString(),
+    }); 
+  } 
+});
+
+exports.updateFundStatus = catchAsync(async (req, res, next) => {
+
+  try{
+    //TODO: check whether post is belongs to the user in the 
+    var fundFromBody = req.body;
+    if(admin.admin_type == "admin" || admin.admin_type == "co-admin" || ( admin.admin_type =="sub-admin" && admin.roles.includes("fund_approval"))){
       await Fund.findByIdAndUpdate(req.params.id, fundFromBody, {
         new: true,
         runValidators: true,
