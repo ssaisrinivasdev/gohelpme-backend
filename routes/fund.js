@@ -16,7 +16,7 @@ router.put('/addfundUpdates/:id',isAuthenticated, addFundUpdates)
 router.get('/funds/search',searchFunds);
 
 router.put('/updatefund/:id',isAuthenticated,updateFund);
-router.put('/update-fund-request',isAdminAuthenticated, updateFundStatus)
+router.put('/update-fund-request/:id',isAdminAuthenticated, updateFundStatus)
 router.get('/trendingfunds',getTrendingFunds) 
 
 

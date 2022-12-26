@@ -80,6 +80,7 @@ exports.updateUser = catchAsync(async (req, res, next) => {
                 "email": userf.email,
                 "payment_request": userf.payment_request,
                 "paypal_address": userf.paypal_address,
+                "rejected_reason": userf.rejected_reason,
             }
     
             res.status(200).json({

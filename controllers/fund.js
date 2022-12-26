@@ -341,7 +341,7 @@ exports.updateFundStatus = catchAsync(async (req, res, next) => {
   try{
     //TODO: check whether post is belongs to the user in the 
     var fundFromBody = req.body;
-    if(admin.admin_type == "admin" || admin.admin_type == "co-admin" || ( admin.admin_type =="sub-admin" && admin.roles.includes("fund_approval"))){
+    if(req.admin.admin_type == "admin" || req.admin.admin_type == "co-admin" || ( req.admin.admin_type =="sub-admin" && req.admin.roles.includes("fund_approval"))){
       await Fund.findByIdAndUpdate(req.params.id, fundFromBody, {
         new: true,
         runValidators: true,
@@ -355,7 +355,7 @@ exports.updateFundStatus = catchAsync(async (req, res, next) => {
     }
     else{
       return res.status(404).json({
-        error: "Invalid fund owner",
+        error: "Invalid admin attempt",
         message: "Error",
       }); 
     }
