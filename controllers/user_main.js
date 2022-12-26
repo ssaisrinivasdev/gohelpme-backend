@@ -33,11 +33,13 @@ exports.getUser = catchAsync(async (req, res, next) => {
                 "email": userf.email,
                 "name": userf.name,
                 "lastname": userf.lastname,
+                "payment_request": userf.payment_request,
+                "paypal_address": userf.paypal_address,
                 "followed_funds": userf.followed_funds,
                 "created_funds": userf.created_funds,
                 "donated_funds": userf.donated_funds,
                 "verification_code": userf.verification_code,
-                "verification_status": userf.verification_status
+                "verification_status": userf.verification_status,
             }
     
             res.status(200).json({

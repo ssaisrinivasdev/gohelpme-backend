@@ -53,6 +53,7 @@ const User = new mongoose.Schema({
 			enum: ["NotRequested", "Requested","Approved", "Rejected"],
 			default: "NotRequested",
 		},
+		paypal_address:			String,
 		verification_code:		Number,
 		verification_status: 	Boolean,
 		verification_expiry:	Date,
