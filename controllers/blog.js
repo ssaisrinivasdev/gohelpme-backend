@@ -65,18 +65,30 @@ exports.getPost = catchAsync(async (req, res, next) => {
 
   //Search Funds
 exports.getAllPosts = catchAsync(async (req, res, next) => {
+  
     try{
         var page = (req.query.page == null ? 0 : req.query.page) <= 0 ? 1 : req.query.page;
-    
+        const keyword = new RegExp(req.query.status,"i");
         var rangeStart = ((page - 1) * 6)+1;
+
         // if(req.query.category){
         const posts = await BlogPost.aggregate([
             { 
                 $facet : {
                     metaInfo : [
+                        { $match : {
+                          $and: [
+                            { "status" : keyword },
+                         ]}
+                        },
                         { $group : { _id : null, count : {$sum : 1} } }
                     ],
                     actualData : [
+                        { $match : {
+                          $and: [
+                            { "status" : keyword },
+                        ]}
+                        },
                         { $skip  : rangeStart-1 },
                         { $limit : 6 },
                         { $sort: {_id: -1}}
@@ -89,6 +101,7 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
         return res.status(200).json({
           success: true,
           "current":page,
+          pages: totalResultsFound==null ? 0 : (Math.ceil(totalResultsFound/6)),
           "posts": posts[0]?.actualData,
           "total": totalResultsFound,
         });
