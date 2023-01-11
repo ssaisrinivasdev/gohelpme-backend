@@ -25,7 +25,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
         }
         else{
             const userf = await User.findById(req.params.id)
-                            .populate('created_funds','createdAt title long_description _id verification_status images goal currentValue percent ')
+                            .populate('created_funds','createdAt title long_description _id verification_status images goal currentValue percent withdrawnAmount inProgressAmount')
                             .populate('donated_funds','createdAt title long_description _id verification_status images goal currentValue percent ')
                             .populate('followed_funds','createdAt title long_description _id verification_status images goal currentValue percent ')
             

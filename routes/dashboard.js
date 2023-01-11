@@ -1,7 +1,7 @@
 const express = require("express")
 const { fundsVerificationDetails, usersPaymentVerificationDetails, withdrawlVerificationDetails
 ,fundApprovalsListDetails, getWithdrawlRequestsList,getFinanceWithDrawls,getFinanceDonations,getBlogsList,
-getQueriesList, getRolesList} = require("../controllers/dashboard")
+getQueriesList, getRolesList, getCharitiesRequestsList, getCharitiesList} = require("../controllers/dashboard")
 const { query } = require("../controllers/queries")
 const {check} = require('express-validator')
 const router = express.Router()
@@ -29,5 +29,8 @@ router.post('/admin/queries-list',getQueriesList);
 
 router.get('/admin/roles-list',getRolesList);
 
+router.put('/admin/charities-funds-list',getCharitiesRequestsList);
+
+router.put('/admin/charities-list',getCharitiesList);
 
 module.exports = router

@@ -5,6 +5,7 @@ const Withdrawl = require("../models/withdrawl");
 const Query = require("../models/queries");
 const Blog = require("../models/blog");
 const Admin = require("../models/admin");
+const Charity = require("../models/charity");
 const catchAsync = require("../middleware/catchAsync")
 const categoryArray = ["Medical","Memorial","Emergency","NonProfit","FinancialEmergency","Animals","Environment",
 "Business","Community","Competition","Creative","Event","Faith","Family","Sports","Travel",
@@ -201,7 +202,7 @@ exports.usersPaymentVerificationDetails = catchAsync(async (req, res, next) => {
                     InProgress : [
                         { $match : {
                             $and:[
-                                {"payment_request" : "Requested" }
+                                {"payment_request" : "InProgress" }
                             ]
                             } 
                         },
@@ -245,7 +246,7 @@ exports.withdrawlVerificationDetails = catchAsync(async (req, res, next) => {
                     InProgress : [
                         { $match : {
                             $and:[
-                                {"withdrawl_status" : "Requested" }
+                                {"withdrawl_status" : "InProgress" }
                             ]
                             } 
                         },
@@ -379,7 +380,7 @@ exports.fundApprovalsListDetails = catchAsync(async (req, res, next) => {
 
 })
 
-//Add Get All Withdrawl Request for table in Dashboard
+//Add Get All Withdrawl Request for table in Dashboard getCharitiesList
 exports.getWithdrawlRequestsList = catchAsync(async (req, res, next) => {
 
     let toDate = new Date(req.body.toDate);
@@ -624,8 +625,7 @@ exports.getQueriesList = catchAsync(async (req, res, next) => {
                     Result : [
                         { $match : {
                             $and:[
-                                { "createdAt"        : { $gte: fromDate, $lte: toDate }},
-                                { "ticket_status" : req.body.ticket_status }
+                                { "createdAt"        : { $gte: fromDate, $lte: toDate }}
                             ]
                             }
                         },
@@ -676,5 +676,100 @@ exports.getRolesList = catchAsync(async (req, res, next) => {
     return res.status(200).json({
         message: "Success",
         rolesList
+    });
+});
+
+
+exports.getCharitiesRequestsList = catchAsync(async (req, res, next) => {
+
+    let toDate = new Date(req.body.toDate==null? new Date() : req.body.toDate);
+    let fromDate = new Date(req.body.fromDate==null? (((new Date()).getDate())-1) : req.body.fromDate);
+
+    if(fromDate > toDate){
+        return res.status(422).json({
+            error: "Date range is not acceptable",
+            message: ""
+          }); 
+    }
+    else if(toDate == null && fromDate == null){
+        toDate = new Date();
+        fromDate = toDate.getDate()-1;
+        toDate.setDate(toDate.getDate());
+    }else if(toDate == null){
+        toDate = new Date();
+    }else if(fromDate == null){
+        fromDate = toDate.getDate()-1;
+    }else{
+        toDate.setDate(toDate.getDate());
+        fromDate.setDate(fromDate.getDate());
+    }
+
+    const fundCharityReq =  await Fund.aggregate(
+        [
+            {
+                $facet : {
+                    Result : [
+                        { $match : {
+                            $and:[
+                                { "createdAt"     : { $gte: fromDate, $lte: toDate }},
+                                { "fund_type"     : "Individual" },
+                                { "percent"       : {$gt: 0} },
+                                { "currentValue"  : {$gt:0} },
+                                {  $expr          : {$eq: [{$subtract: ["$currentValue", "$withdrawnAmount"]}, 0]}}
+                            ]
+                            }
+                        },
+                            {$project:{
+                                "_id":1,
+                                "title":1,
+                                "createdAt":1,
+                                "owner":1,
+                                "percent": 1,
+                                "currentValue": 1,
+                                "goal":1,
+                                "withdrawnAmount":1
+                            }
+                        },
+                        { $sort : { currentValue : -1, percent : -1} }
+                    ]
+                }
+            }
+        ]
+    )   
+
+        return res.status(200).json({
+            message: "Success",
+            fundCharityReq
+        });
+});
+
+exports.getCharitiesList = catchAsync(async (req, res, next) => {
+
+    const charitiesList =  await Charity.aggregate(
+        [
+            {
+                $facet : {
+                    Result : [
+                            {$project:{
+                                "_id":1,
+                                "name":1,
+                                "image":1,
+                                "description":1,
+                                "paypalAddress":1,
+                                "contact_name":1,
+                                "contact_email":1,
+                                "admin_type":1,
+                                "website":1
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    )   
+
+    return res.status(200).json({
+        message: "Success",
+        charitiesList
     });
 });

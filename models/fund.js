@@ -84,6 +84,14 @@ const Fund = new mongoose.Schema({
 			type: Number,
 			default: 0
 		},
+		withdrawnAmount:{
+			type: Number,
+			default: 0
+		},
+		inProgressAmount:{
+			type: Number,
+			default: 0
+		},
 		// {
 		// 	type: Number,
 		// 	default: function() {

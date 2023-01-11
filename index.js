@@ -40,6 +40,7 @@ const blogPost = require('./routes/blog')
 const withdrawl = require('./routes/withdrawl')
 const query = require('./routes/query')
 const admin = require('./routes/admin')
+const charity = require('./routes/charity')
 
 // Using routes
 app.use('/api', userRoutes);
@@ -50,6 +51,7 @@ app.use('/api', blogPost);
 app.use('/api/withdrawl', withdrawl);
 app.use('/api/query', query);
 app.use('/api/admin', admin);
+app.use('/api', charity);
 
 app.get('/',(req,res)=>{
     console.log("Working");
