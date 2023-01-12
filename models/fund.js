@@ -10,6 +10,10 @@ const Fund = new mongoose.Schema({
 			type: Schema.Types.ObjectId,
 			ref: 'user-data'
 		},
+		charity:{
+			type: Schema.Types.ObjectId,
+			ref: 'charity'
+		},
 		title: {
 			type: String,
 			maxlength: 60,

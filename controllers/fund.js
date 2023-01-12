@@ -1,6 +1,7 @@
 const User = require("../models/user")
 const Fund = require("../models/fund");
 const Donations = require("../models/donation")
+const Charity = require("../models/charity")
 const {validationResult} = require('express-validator')
 var jwt = require('jsonwebtoken')
 var expressJwt = require('express-jwt')
@@ -215,6 +216,10 @@ exports.createFund = (async (req, res, next)=>{
         message: "Error"
       }); 
     }
+
+    
+
+
     const fundData = {
       owner: user._id,
       title: req.body.title,
@@ -236,6 +241,13 @@ exports.createFund = (async (req, res, next)=>{
       Zip_code: req.body.Zip_code,
       city: req.body.city,
       tags: req.body.tags
+    }
+
+    if(req.body.fund_type == "Charity"){
+      const charity_f = await Charity.findById(req.body.charity);
+      if(charity_f){
+        fundData.charity = charity_f.id;
+      }
     }
 
     const fund = await Fund.create(fundData);
