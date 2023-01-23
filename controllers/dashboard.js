@@ -714,7 +714,7 @@ exports.getCharitiesRequestsList = catchAsync(async (req, res, next) => {
                                 { "createdAt"     : { $gte: fromDate, $lte: toDate }},
                                 { "fund_type"     : "Individual" },
                                 { "percent"       : {$gt: 0} },
-                                { "currentValue"  : {$gt:0} },
+                                { "currentValue"  : {$gt: 0} },
                                 {  $expr          : {$eq: [{$subtract: ["$currentValue", "$withdrawnAmount"]}, 0]}}
                             ]
                             }
@@ -727,7 +727,8 @@ exports.getCharitiesRequestsList = catchAsync(async (req, res, next) => {
                                 "percent": 1,
                                 "currentValue": 1,
                                 "goal":1,
-                                "withdrawnAmount":1
+                                "withdrawnAmount":1,
+                                "charity": 1
                             }
                         },
                         { $sort : { currentValue : -1, percent : -1} }

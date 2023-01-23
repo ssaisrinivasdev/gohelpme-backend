@@ -138,3 +138,26 @@ exports.modifyCharity = catchAsync(async (req, res, next) => {
     }); 
   }
 });
+
+exports.getChairtyFundPaymentAddress = (async (req, res, next)=>{
+  try{
+    const charity = await Charity.findById(req.params.id);
+    if(!charity){
+      return res.status(404).json({
+        error: "Charity not found",
+        message: "Error"
+      }); 
+    }else{
+      res.status(200).json({
+          message: "Success",
+          "paypal": charity.paypalAddress
+      });
+    }
+  }
+  catch(err){
+    return res.status(400).json({
+      error: "Something went wrong",
+      message: err.toString(),
+    }); 
+  } 
+});

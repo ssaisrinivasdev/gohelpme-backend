@@ -384,3 +384,27 @@ exports.updateFundStatus = catchAsync(async (req, res, next) => {
     }); 
   } 
 });
+
+
+exports.getFundPaymentAddress = (async (req, res, next)=>{
+  try{
+    const fund = await Fund.findById(req.params.id).populate("owner");
+    if(!fund){
+      return res.status(404).json({
+        error: "Fund not found",
+        message: "Error"
+      }); 
+    }else{
+      res.status(200).json({
+          message: "Success",
+          "paypal": fund.owner.paypal_address
+      });
+    }
+  }
+  catch(err){
+    return res.status(400).json({
+      error: "Something went wrong",
+      message: err.toString(),
+    }); 
+  } 
+});

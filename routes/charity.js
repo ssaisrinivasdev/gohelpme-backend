@@ -1,5 +1,6 @@
 const express = require("express")
-const { createNewCharity, getAllCharities, deleteCharity, modifyCharity, getCharity} = require("../controllers/charity")
+const { createNewCharity, getAllCharities, deleteCharity, modifyCharity, getCharity,
+    getChairtyFundPaymentAddress} = require("../controllers/charity")
 const { isAuthenticated } = require('../middleware/auth');
 const {uploadFundImages} = require('../utils/awsFunctions');
 const router = express.Router()
@@ -9,5 +10,6 @@ router.get('/charity/:id',getCharity);
 router.put('/edit-charity/:id', modifyCharity);
 router.delete('/delete-charity/:id', deleteCharity);
 router.get('/charities',getAllCharities);
+router.get('/charity-payment-address/:id',getChairtyFundPaymentAddress)
 
 module.exports = router
