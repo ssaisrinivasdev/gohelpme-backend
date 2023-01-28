@@ -20,14 +20,14 @@ exports.getFundDetails = catchAsync(async (req, res, next) => {
       var following_status = "not_following";
       try{
         const { token } = req.cookies;
-        if(token) 
+        if(!token) 
         {
           following_status = "not_loggedin"
         }
         else
         {
-          //const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-          const user = await User.findById("637a3e91d5edc93ca1fc446e");
+          const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+          const user = await User.findById(decodedData);
           if(!user)
           {
             following_status = user
