@@ -27,7 +27,7 @@ exports.getFundDetails = catchAsync(async (req, res, next) => {
         else
         {
           const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-          const user = await User.findById(decodedData);
+          const user = await User.findById(decodedData.id);
           if(!user)
           {
             following_status = user
