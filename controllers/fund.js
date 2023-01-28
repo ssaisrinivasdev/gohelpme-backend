@@ -90,7 +90,8 @@ exports.searchFunds = catchAsync(async (req, res, next) => {
             { $match : {
                         $and: [
                           {$or:[{ "title" : keyword }, { "tags" : keyword }]},
-                          {"category": category}
+                          {"category": category},
+                          {"verification_status": "Approved"}
                        ]}
             },
             { $group : { _id : null, count : {$sum : 1} } }
@@ -99,7 +100,8 @@ exports.searchFunds = catchAsync(async (req, res, next) => {
             { $match : {
                         $and: [
                           {$or:[{ "title" : keyword }, { "tags" : keyword }]},
-                          {"category": category}
+                          {"category": category},
+                          {"verification_status": "Approved"}
                       ]}},
             { $skip  : rangeStart-1 },
             { $limit : 6 },
@@ -292,7 +294,8 @@ exports.fundsByCategory = catchAsync(async (req, res, next) => {
           category: {
             $regex: req.query.category == null ? "": req.query.category,
             $options: "i",
-        }
+        },
+        verification_status: "Approved"
       })
       .sort({ _id: -1 })
       .skip(rangeStart-1)
