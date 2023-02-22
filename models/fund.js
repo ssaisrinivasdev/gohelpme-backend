@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const categoryArray = ["Medical","Memorial","Emergency","NonProfit","FinancialEmergency","Animals","Environment",
 "Business","Community","Competition","Creative","Event","Faith","Family","Sports","Travel",
-"Volunteer","Wishes","Others"];
+"Volunteer","Wishes","Others", "Refugees", "Hurricans", "Earthquake", "Disaster"];
 
 //TODO: To add the commented properties
 const Fund = new mongoose.Schema({
