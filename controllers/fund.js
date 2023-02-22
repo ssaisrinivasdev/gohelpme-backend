@@ -166,6 +166,29 @@ exports.getTrendingFunds= catchAsync(async (req, res, next) => {
 
 });
 
+exports.getLastestFunds= catchAsync(async (req, res, next) => {
+  const funds = await Fund.aggregate([
+    { 
+      $facet : {
+        actualData : [
+          { $match : {
+                      $and: [
+                        {"verification_status": "Approved"}
+                    ]}},
+          { $limit : 10 },
+          {$sort: {_id: -1}}
+        ]
+      }
+    }
+  ]);
+
+   return res.status(200).json({
+      message: "Success",
+      "funds": funds.actualData
+    });
+
+});
+
 
 //Create Public API to get All fund posts
 exports.getAllFunds = (req, res)=>{
