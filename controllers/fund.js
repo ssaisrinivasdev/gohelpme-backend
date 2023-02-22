@@ -135,7 +135,7 @@ exports.getTrendingFunds= catchAsync(async (req, res, next) => {
     { 
       $facet : {
         donations : [
-          { $match: { "createdAt": { $gt: new Date(Date.now() - 24*60*60 * 1000*14) } } },
+          { $match: { "createdAt": { $gt: new Date(Date.now() - 24*60*60 * 1000*140) } } },
           {
             $group:{
               _id:"$fund_id",
@@ -184,7 +184,7 @@ exports.getLastestFunds= catchAsync(async (req, res, next) => {
 
    return res.status(200).json({
       message: "Success",
-      "funds": funds.actualData
+      "funds": funds[0].actualData
     });
 
 });
